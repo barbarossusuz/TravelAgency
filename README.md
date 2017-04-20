@@ -28,21 +28,28 @@ You can start by cloning the latest version.
 This will install both run-time project dependencies and developer tools listed
 in [package.json](./package.json) file.
 
-#### 3. How to start project in Development Mode
-
-```shell
-$ npm start
-```
-#### 4. To Install Peer Dependencies
+#### 3. To Install Peer Dependencies
 
 ```shell
 $ react-native link
 ```
 
-#### 5. Open Emulator then enter
+#### 4. Open Emulator then enter
 
 ```shell
 $ react-native run-android
+```
+
+#### 5. How to start project in Development Mode
+
+```shell
+$ npm start
+```
+
+*or
+
+```shell
+$ react-native start
 ```
 
 
