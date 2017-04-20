@@ -21,7 +21,7 @@
 
 
 #### 1. Get the latest version
-You can start by cloning the latest version of RES.
+You can start by cloning the latest version.
 
 #### 2. Run `npm install`
 This will install both run-time project dependencies and developer tools listed
@@ -32,7 +32,16 @@ in [package.json](./package.json) file.
 ```shell
 $ npm start
 ```
+#### 4. Install Peer Dependencies enter to terminal
 
-Open Browser and enter `http:/localhost:8080` (default)
+```shell
+$ react-native link
+```
+
+#### 5. Open Emulator and enter to terminal
+
+```shell
+$ react-native run-android
+```
 
 
