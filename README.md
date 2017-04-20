@@ -7,6 +7,7 @@
 * [react native file picker](https://github.com/Lichwa/react-native-file-picker) for access file manager.
 * [react native vector icons](https://github.com/oblador/react-native-vector-icons) for react native icons.
 * [react native router flux](https://github.com/aksonov/react-native-router-flux) for Navigation .
+* [react native drawer](https://github.com/root-two/react-native-drawer) for Drawer (Sidebar) .
 * [Firebase](https://github.com/firebase/) for Cloud Database .
 
 #####  Requirements
