@@ -2,7 +2,6 @@
 
 
 ##### What's inside
-* [Babel](https://babeljs.io/flow) for writing codes with ES6 syntax and transpiling them browser compatible codes.
 * [React Native](https://github.com/facebook/react-native) .
 * [Native Base](https://github.com/GeekyAnts/NativeBase) for ui.
 * [react native file picker](https://github.com/Lichwa/react-native-file-picker) for access file manager.
