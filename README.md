@@ -15,6 +15,7 @@
 * Mac OS X, Windows, or Linux
 * Node.js v5.0 or newer
 * npm v3.3 or newer (new to npm?)
+* An account from firebase and change FireBase.js config
 
 
 ### Quick Start
