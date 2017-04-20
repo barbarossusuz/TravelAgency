@@ -39,7 +39,7 @@ $ npm start
 $ react-native link
 ```
 
-#### 5. Open Emulator and you are done
+#### 5. Open Emulator then enter
 
 ```shell
 $ react-native run-android
