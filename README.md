@@ -32,13 +32,13 @@ in [package.json](./package.json) file.
 ```shell
 $ npm start
 ```
-#### 4. Install Peer Dependencies enter to terminal
+#### 4. To Install Peer Dependencies
 
 ```shell
 $ react-native link
 ```
 
-#### 5. Open Emulator and enter to terminal
+#### 5. Open Emulator and you are done
 
 ```shell
 $ react-native run-android
