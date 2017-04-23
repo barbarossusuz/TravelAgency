@@ -7,6 +7,7 @@ import {
     ActivityIndicator,
     Image
 } from 'react-native';
+import {firebaseRef} from "../Firebase";
 
 
 export default class InitialPage extends Component {
@@ -28,17 +29,29 @@ export default class InitialPage extends Component {
             </View>
         );
     }
+
 componentDidMount(){
     //Check if userData is stored on device else open Login
     setTimeout(()=>{
-        AsyncStorage.getItem('userData').then((user_data_json) => {
-            let userData = JSON.parse(user_data_json);
-            if(userData !== null){
-                Actions.welcomePage();
-            }else{
+        firebaseRef.auth().onAuthStateChanged((user1) => {
+            if (user1) {
+                var user = firebaseRef.auth().currentUser;
+                if (user !== null) {
+                    Actions.welcomePage();
+
+                }
+            } else {
                 Actions.login();
             }
         });
+        // AsyncStorage.getItem('userData').then((user_data_json) => {
+        //     let userData = JSON.parse(user_data_json);
+        //     if(userData !== null){
+        //         Actions.welcomePage();
+        //     }else{
+        //         Actions.login();
+        //     }
+        // });
     },2000);
 }
 }

@@ -8,10 +8,12 @@ import {
     AsyncStorage,
     Button,
     Image,
-    TextInput
-    } from 'react-native';
+    TextInput,
+    Keyboard
+} from 'react-native';
 import Menu from "../main/Menu";
 import {firebaseRef} from "../Firebase";
+import RNFetchBlob from 'react-native-fetch-blob';
 
 var FilePickerManager = require('NativeModules').FilePickerManager;
 
@@ -23,7 +25,9 @@ export default class Profile extends Menu {
             userData: null,
             name: null,
             email: null,
-            photoUrl: null
+            photoUrl: null,
+            newPhotoUrl: null,
+            password: null
         }
 
 
@@ -31,21 +35,21 @@ export default class Profile extends Menu {
 
     renderContent() {
         return (
-            <View style={styles.container}>
+            <View style={styles.profilContainer}>
+
                 <View style={styles.logoContainer}>
                     <Image
-                        style={{width: 100, height: 100}}
-                        source={this.state.photoUrl === null?require("../images/profile.png"):{uri: this.state.photoUrl}}/>
-                    <Button
-                        onPress={this._onPressPhoto.bind(this)}
-                        title="Please Click To Select Image"
-                        color="#337ab7"
-                        accessibilityLabel="Select Image From Device"
-                    />
+                        style={{width: 120, height: 120, marginBottom: 10}}
+                        source={this.state.photoUrl === null ? require("../images/profile.png") : {uri: this.state.newPhotoUrl}}/>
+
+                    <TouchableOpacity style={styles.photoButtonContainer} onPress={() => this._onPressPhoto()}>
+                        <Text style={styles.photoButtonText}>Select Image</Text>
+                    </TouchableOpacity>
 
                 </View>
+
                 <View>
-                    <View style={styles.loginContainer}>
+                    <View style={styles.formContainer}>
                         <TextInput
                             placeholder="EMAIL"
                             value={this.state.email}
@@ -59,15 +63,26 @@ export default class Profile extends Menu {
                         <TextInput
                             placeholder="NAME"
                             value={this.state.name}
-                            returnKeyType="done"
+                            returnKeyType="next"
                             onChangeText={(text) => this.setState({name: text})}
                             placeholderTextColor="#000000"
                             style={styles.input}
                             autoCapitalize="none"
                             autoCorrect={false}/>
+                        <TextInput
+                            placeholder="PASSWORD"
+                            value={this.state.password}
+                            returnKeyType="done"
+                            onChangeText={(text) => this.setState({password: text})}
+                            placeholderTextColor="#000000"
+                            style={styles.input}
+                            autoCapitalize="none"
+                            secureTextEntry={true}
+                            autoCorrect={false}/>
 
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this._updateEmail()}>
-                            <Text style={styles.loginButton}>Update Profil</Text>
+
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this._updateProfil()}>
+                            <Text style={styles.updateButton}>Update Profil</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -76,35 +91,40 @@ export default class Profile extends Menu {
     }
 
 
-    _updateEmail() {
-        var user = firebaseRef.auth().currentUser;
-
-        console.log("user",user);
-        if (this.state.email === null) {
-            user.updateEmail(this.state.email).then(function () {
-                if ((this.state.name && this.state.photoUrl) === null) {
-                    this._updateProfil();
-                }else return false;
-            }, function (error) {
-                console.log(error);
-            });
-        }
-        else {
-            this._updateProfil();
-        }
-    }
-
     _updateProfil() {
         var user = firebaseRef.auth().currentUser;
 
+        console.log(user);
+
+        //Update Email
+        user.updateEmail(this.state.email).then(() => {
+        }, (error) => {
+            var errorMessage = error.message;
+            console.log("",errorMessage)
+            ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
+        });
+
+        //Update Password
+        if (this.state.password !== null) {
+            user.updatePassword(this.state.password).then( ()=> {
+                ToastAndroid.showWithGravity("pass successful", ToastAndroid.LONG, ToastAndroid.CENTER);
+                this.setState({password: null});
+            }, function (error) {
+                var errorMessage = error.message;
+            });
+        }
+        //Update Name and Photo
         user.updateProfile({
             displayName: this.state.name,
-            photoURL: this.state.photoUrl
-        }).then(function () {
+            photoURL: this.state.newPhotoUrl
+        }).then( () =>{
             ToastAndroid.showWithGravity("Update successful", ToastAndroid.SHORT, ToastAndroid.CENTER);
-        }, function (error) {
-            console.log(error)
+        }, (error) => {
+            var errorMessage = error.message;
+            console.log("",errorMessage);
+            ToastAndroid.showWithGravity(errorMessage,ToastAndroid.SHORT, ToastAndroid.CENTER);
         });
+        Keyboard.dismiss();
     }
 
     _onPressPhoto() {
@@ -127,9 +147,9 @@ export default class Profile extends Menu {
             }
             else {
                 if (response) {
-                    if ((response.path).replace(/^.*[\\\/]/, '').slice(-4) ===  ".png"||".jpg") {
+                    if ((response.path).replace(/^.*[\\\/]/, '').slice(-4) === ".png" || ".jpg") {
                         this.setState({
-                            photoUrl: response.uri
+                            newPhotoUrl: response.uri
                         });
                     }
                     else {
@@ -141,26 +161,43 @@ export default class Profile extends Menu {
         });
     }
 
-    _renderProfil() {
-        var user = firebaseRef.auth().currentUser;
+    _checkPhotoExist=()=> {
+        RNFetchBlob.fs.exists(this.state.photoUrl)
+            .then((exist) => {
+                if (exist === true)
+                    this.setState({newPhotoUrl: this.state.photoUrl});
+                else
+                    this.setState({newPhotoUrl: "https://img.clipartfest.com/5a68d99cd467003c04b4ef64004c4313_download-this-image-as-profile-clipart_600-557.png"});
+            })
+    };
 
-        if (user !== null) {
-            this.setState({
-                name: user.displayName || "Name",
-                email: user.email,
-                photoUrl: user.photoURL
-            });
+    _renderProfil=()=> {
+        firebaseRef.auth().onAuthStateChanged((user1) => {
+            if (user1) {
+                var user = firebaseRef.auth().currentUser;
+                if (user !== null) {
+                    this.setState({
+                        name: user.displayName || "Name",
+                        email: user.email,
+                        photoUrl: user.photoURL
+                    });
+                    this._checkPhotoExist();
 
-        }
-    }
+                }
+            } else {
+                // No user is signed in.
+            }
+        });
+    };
 
-    componentDidMount() {
+    componentWillMount() {
         this._renderProfil();
     }
+
 }
 
 const styles = StyleSheet.create({
-    container: {
+    profilContainer: {
         flex: 1,
         backgroundColor: "#fbfaff"
     },
@@ -176,9 +213,9 @@ const styles = StyleSheet.create({
         textAlign: "center",
         opacity: 0.9
     },
-    //login
-    loginContainer: {
-        padding: 20,
+
+    formContainer: {
+        padding: 20
     },
     input: {
         height: 40,
@@ -192,7 +229,19 @@ const styles = StyleSheet.create({
         borderWidth: 0.8,
         borderRadius: 30
     },
-    loginButton: {
+    photoButtonContainer: {
+        backgroundColor: "#80CBC4",
+        width: 200,
+        paddingVertical: 15,
+        borderWidth: 0.8,
+        borderRadius: 5
+    },
+    photoButtonText: {
+        textAlign: "center",
+        color: "#ffffff",
+        fontWeight: "700"
+    },
+    updateButton: {
         textAlign: "center",
         color: "#000000",
         fontWeight: "700"

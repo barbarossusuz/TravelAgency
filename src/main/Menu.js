@@ -48,7 +48,7 @@ export default class Menu extends Component {
                     }
                 }}
                 tapToClose={true}
-                content={<SideBar />}>
+                content={<SideBar closeToggle={this.closeDrawer}/>}>
                 <Container>
                     <Head openToggle={this.openDrawer}/>
                     {this.renderContent()}
@@ -66,9 +66,9 @@ export default class Menu extends Component {
         this.drawer.open();
     };
 
-    closeDrawer() {
+    closeDrawer=() => {
         this.drawer.close();
-    }
+    };
 
     componentDidMount() {
         Keyboard.dismiss();

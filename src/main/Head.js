@@ -16,7 +16,7 @@ export default class Head extends Component {
 
     render() {
         return (
-            <Header style={{backgroundColor: "#FFC107"}}>
+            <Header style={{backgroundColor: "#009688"}}>
                 <Left>
                     <View style={{flex: 1, flexDirection: "row", justifyContent: "flex-start"}}>
                         <Button transparent onPress={this.props.openToggle}><Icon size={25} color="white" name='md-menu'/></Button>
@@ -28,9 +28,7 @@ export default class Head extends Component {
                 </TouchableOpacity>
                 </Body>
                 <Right>
-                    <View style={{flex: 1, flexDirection: "row", justifyContent: "flex-start"}}>
-                        <Button transparent onPress={()=> Actions.profile()}><Icon size={25} color="white" name='md-menu'/></Button>
-                    </View>
+
                 </Right>
             </Header>
         );

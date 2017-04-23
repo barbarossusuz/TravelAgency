@@ -1,0 +1,22 @@
+[
+  {
+    "key": "paris",
+    "country": "FRANCE",
+    "city": "PARIS"
+  },
+  {
+    "key": "pisa",
+    "country": "ITALIA",
+    "city": "PISA"
+  },
+  {
+    "key": "barcelona",
+    "country": "SPAIN",
+    "city": "BARCELONA"
+  },
+  {
+    "key": "londra",
+    "country": "ENGLAND",
+    "city": "LONDRA"
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "key": "paris",
+    "content": [
+      {
+        "hotel": "fourseason",
+        "price": "100"
+      },
+      {
+        "hotel": "Grand Hotel Via Veneto",
+        "price": "200"
+      }
+    ]
+  },
+  {
+    "key": "pisa",
+    "content": [
+      {
+        "hotel": "Armani Hotel Milano",
+        "price": "300"
+      },
+      {
+        "hotel": "Brunelleschi Hotel Florence",
+        "price": "400"
+      }
+    ]
+  },
+  {
+    "key": "barcelona",
+    "content": [
+      {
+        "hotel": "Palazzo Venart",
+        "price": "500"
+      },
+      {
+        "hotel": "Palazzo Manfredi",
+        "price": "600"
+      }
+    ]
+  }
+]

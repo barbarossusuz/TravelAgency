@@ -8,4 +8,6 @@ var config = {
     storageBucket: "travelagency-32090.appspot.com",
     messagingSenderId: "883175737847"
 };
+
 export const firebaseRef = Firebase.initializeApp(config);
+
