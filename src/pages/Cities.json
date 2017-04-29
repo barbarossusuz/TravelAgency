@@ -1,22 +1,41 @@
 [
   {
-    "key": "paris",
-    "country": "FRANCE",
-    "city": "PARIS"
+    "countryKey": "france",
+    "content": [
+      {
+        "key": "paris",
+        "hotels": "1"
+      },
+      {
+        "key": "lyon",
+        "hotels": "2"
+      }
+    ]
   },
   {
-    "key": "pisa",
-    "country": "ITALIA",
-    "city": "PISA"
+    "countryKey": "italia",
+    "content": [
+      {
+        "key": "pisa",
+        "hotels": "3"
+      },
+      {
+        "key": "milano",
+        "hotels": "4"
+      }
+    ]
   },
   {
-    "key": "barcelona",
-    "country": "SPAIN",
-    "city": "BARCELONA"
-  },
-  {
-    "key": "londra",
-    "country": "ENGLAND",
-    "city": "LONDRA"
+    "countryKey": "spain",
+    "content": [
+      {
+        "key": "madrid",
+        "hotels": "5"
+      },
+      {
+        "key": "barcelona",
+        "hotels": "6"
+      }
+    ]
   }
 ]

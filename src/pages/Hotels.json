@@ -1,38 +1,44 @@
 [
   {
-    "key": "paris",
+    "cityKey": "paris",
     "content": [
       {
+        "key" : "1",
         "hotel": "fourseason",
         "price": "100"
       },
       {
+        "key" : "1",
         "hotel": "Grand Hotel Via Veneto",
         "price": "200"
       }
     ]
   },
   {
-    "key": "pisa",
+    "cityKey": "lyon",
     "content": [
       {
+        "key" : "1",
         "hotel": "Armani Hotel Milano",
         "price": "300"
       },
       {
+        "key" : "1",
         "hotel": "Brunelleschi Hotel Florence",
         "price": "400"
       }
     ]
   },
   {
-    "key": "barcelona",
+    "cityKey": "pisa",
     "content": [
       {
+        "key" : "1",
         "hotel": "Palazzo Venart",
         "price": "500"
       },
       {
+        "key" : "1",
         "hotel": "Palazzo Manfredi",
         "price": "600"
       }
