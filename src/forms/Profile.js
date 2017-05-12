@@ -162,13 +162,13 @@ export default class Profile extends Menu {
     }
 
     _checkPhotoExist=()=> {
-        RNFetchBlob.fs.exists(this.state.photoUrl)
-            .then((exist) => {
-                if (exist === true)
-                    this.setState({newPhotoUrl: this.state.photoUrl});
-                else
-                    this.setState({newPhotoUrl: "https://img.clipartfest.com/5a68d99cd467003c04b4ef64004c4313_download-this-image-as-profile-clipart_600-557.png"});
-            })
+        // RNFetchBlob.fs.exists(this.state.photoUrl)
+        //     .then((exist) => {
+        //         if (exist === true)
+        //             this.setState({newPhotoUrl: this.state.photoUrl});
+        //         else
+        //             this.setState({newPhotoUrl: "https://img.clipartfest.com/5a68d99cd467003c04b4ef64004c4313_download-this-image-as-profile-clipart_600-557.png"});
+        //     })
     };
 
     _renderProfil=()=> {

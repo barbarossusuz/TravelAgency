@@ -24,7 +24,8 @@ export default class Country extends Menu {
         this.state = {
             userData: null,
             url: null,
-            imageArr: []
+            renderArr: [],
+            countryData: []
         };
     }
 
@@ -33,69 +34,53 @@ export default class Country extends Menu {
             <Container style={{alignItems: "center"}}>
                 <Text> COUNTRIES </Text>
                 <Content>
-                    {this.renderList() }
+                    {this.state.renderArr}
                 </Content>
             </Container>
         )
     }
 
 
-    renderList() {
-        if ((this.state.imageArr).length === Countries.length) {
-            let arr = [];
-            Countries.map((countries) => {
-                let url = "";
-                (this.state.imageArr).map((imageArr) => {
-                    if (imageArr.key === countries.key) {
-                        url = imageArr.url
-                    }
-                });
+    goPage(key) {
+        Actions.city({countryKey: key});
+    }
+
+
+    getData(){
+        firebaseRef.database().ref("country").once("value").then( (value)=> {
+          this.setState({countryData: value.val()})
+        }).then(()=>{
+            let arr =[];
+            let countryData = this.state.countryData;
+            countryData.map((countries) => {
+                console.log(countries);
                 arr.push
                 (
                     <TouchableOpacity key={countries.key} onPress={() => this.goPage(countries.key)}>
                         <Image
                             style={{width: 400, height: 180, marginBottom: 3, marginTop: 3, borderRadius: 15}}
                             source={{
-                                uri: url ? url : "http://www.jqueryscript.net/images/jQuery-Ajax-Loading-Overlay-with-Loading-Text-Spinner-Plugin.jpg"
+                                uri:
+                                    // countries.url ?
+                                    // countries.url:
+                                    "http://www.jqueryscript.net/images/jQuery-Ajax-Loading-Overlay-with-Loading-Text-Spinner-Plugin.jpg"
                             }}>
                             <View>
-                                <Text style={{fontWeight:"300", color: "white",fontSize:18}}> {(countries.key).toUpperCase()} </Text>
+                                <Text style={{
+                                    fontWeight: "300",
+                                    color: "white",
+                                    fontSize: 18
+                                }}> {(countries.key).toUpperCase()} </Text>
                             </View>
                         </Image>
                     </TouchableOpacity>
                 );
             });
-            return arr;
-        }
-        else {
-            return <Text> Loading.. </Text>;
-        }
-
-    }
-
-    goPage(key) {
-        Actions.city({countryKey: key});
-    }
-
-    getimage() {
-        let imageArr = [];
-        Countries.map((countries) => {
-            storageRef.child(countries.key + ".jpg").getDownloadURL().then((url) => {
-                imageArr.push(
-                    {
-                        key: countries.key,
-                        url: url
-                    }
-                );
-                this.setState({
-                    imageArr
-                });
-            });
+            this.setState({renderArr: arr});
         });
     }
-
     componentDidMount() {
-        this.getimage();
+        this.getData();
     }
 
     componentWillMount() {
