@@ -26,8 +26,7 @@ export default class SideBar extends Component {
         this.state = {
             name: null,
             email: null,
-            photoUrl: null,
-            newPhotoUrl: null
+            photoUrl: null
         }
 
     }
@@ -44,7 +43,7 @@ export default class SideBar extends Component {
                     <TouchableOpacity style={{width: 100}} onPress={() => Actions.profile()}>
                         <Image
                             style={{width: 70, height: 70, borderRadius: 35}}
-                            source={this.state.photoUrl === null ? require("../images/profile.png") : {uri:this.state.newPhotoUrl}}/>
+                            source={this.state.photoUrl === null ? require("../images/profile.png") : {uri:this.state.photoUrl}}/>
                     </TouchableOpacity>
 
                     <View style={{marginTop: 10}}>
@@ -100,7 +99,7 @@ export default class SideBar extends Component {
 
     }
 
-    _renderProfile=()=> {
+    _renderProfile() {
         firebaseRef.auth().onAuthStateChanged((user1) => {
             if (user1) {
                 var user = firebaseRef.auth().currentUser;
@@ -110,8 +109,6 @@ export default class SideBar extends Component {
                         email: user.email,
                         photoUrl: user.photoURL
                     });
-                    this._checkPhotoExist();
-
                 }
             } else {
                 // No user is signed in.
@@ -119,9 +116,10 @@ export default class SideBar extends Component {
         });
     };
 
-    componentWillMount() {
+    componentDidMount(){
         this._renderProfile();
     }
+
 }
 
 const styles = StyleSheet.create({

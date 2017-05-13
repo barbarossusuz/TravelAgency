@@ -17,6 +17,11 @@ import RNFetchBlob from 'react-native-fetch-blob';
 
 var FilePickerManager = require('NativeModules').FilePickerManager;
 
+const Blob = RNFetchBlob.polyfill.Blob;
+const fs = RNFetchBlob.fs;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+window.Blob = Blob;
+
 export default class Profile extends Menu {
 
     constructor(props) {
@@ -26,7 +31,6 @@ export default class Profile extends Menu {
             name: null,
             email: null,
             photoUrl: null,
-            newPhotoUrl: null,
             password: null
         }
 
@@ -40,7 +44,7 @@ export default class Profile extends Menu {
                 <View style={styles.logoContainer}>
                     <Image
                         style={{width: 120, height: 120, marginBottom: 10}}
-                        source={this.state.photoUrl === null ? require("../images/profile.png") : {uri: this.state.newPhotoUrl}}/>
+                        source={this.state.photoUrl === null ? require("../images/profile.png") : {uri: this.state.photoUrl}}/>
 
                     <TouchableOpacity style={styles.photoButtonContainer} onPress={() => this._onPressPhoto()}>
                         <Text style={styles.photoButtonText}>Select Image</Text>
@@ -100,13 +104,13 @@ export default class Profile extends Menu {
         user.updateEmail(this.state.email).then(() => {
         }, (error) => {
             var errorMessage = error.message;
-            console.log("",errorMessage)
+            console.log("", errorMessage);
             ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
         });
 
         //Update Password
         if (this.state.password !== null) {
-            user.updatePassword(this.state.password).then( ()=> {
+            user.updatePassword(this.state.password).then(() => {
                 ToastAndroid.showWithGravity("pass successful", ToastAndroid.LONG, ToastAndroid.CENTER);
                 this.setState({password: null});
             }, function (error) {
@@ -116,13 +120,13 @@ export default class Profile extends Menu {
         //Update Name and Photo
         user.updateProfile({
             displayName: this.state.name,
-            photoURL: this.state.newPhotoUrl
-        }).then( () =>{
+            photoURL: this.state.photoUrl
+        }).then(() => {
             ToastAndroid.showWithGravity("Update successful", ToastAndroid.SHORT, ToastAndroid.CENTER);
         }, (error) => {
             var errorMessage = error.message;
-            console.log("",errorMessage);
-            ToastAndroid.showWithGravity(errorMessage,ToastAndroid.SHORT, ToastAndroid.CENTER);
+            console.log("", errorMessage);
+            ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
         });
         Keyboard.dismiss();
     }
@@ -149,8 +153,9 @@ export default class Profile extends Menu {
                 if (response) {
                     if ((response.path).replace(/^.*[\\\/]/, '').slice(-4) === ".png" || ".jpg") {
                         this.setState({
-                            newPhotoUrl: response.uri
+                            photoUrl: response.uri
                         });
+                        this.uploadImage(response.uri);
                     }
                     else {
                         ToastAndroid.showWithGravity("Selected file is not a png or jpg file", ToastAndroid.LONG, ToastAndroid.TOP);
@@ -161,7 +166,36 @@ export default class Profile extends Menu {
         });
     }
 
-    _checkPhotoExist=()=> {
+    uploadImage(uri,mime = 'img/jpg'){
+
+        return new Promise((resolve, reject) => {
+            const uploadUri =  uri;
+            let uploadBlob = null;
+
+            const imageRef = firebaseRef.storage().ref("userProfilePhoto/").child("deneme.jpg");
+
+            fs.readFile(uploadUri, 'base64')
+                .then((data) => {
+                    return Blob.build(data, { type: `${mime};BASE64` })
+                })
+                .then((blob) => {
+                    uploadBlob = blob;
+                    return imageRef.put(blob, { contentType: mime })
+                })
+                .then(() => {
+                    uploadBlob.close();
+                    return imageRef.getDownloadURL()
+                })
+                .then((url) => {
+                    resolve(url)
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        })
+    }
+
+    _checkPhotoExist = () => {
         // RNFetchBlob.fs.exists(this.state.photoUrl)
         //     .then((exist) => {
         //         if (exist === true)
@@ -171,7 +205,7 @@ export default class Profile extends Menu {
         //     })
     };
 
-    _renderProfil=()=> {
+    _renderProfil() {
         firebaseRef.auth().onAuthStateChanged((user1) => {
             if (user1) {
                 var user = firebaseRef.auth().currentUser;
@@ -181,8 +215,6 @@ export default class Profile extends Menu {
                         email: user.email,
                         photoUrl: user.photoURL
                     });
-                    this._checkPhotoExist();
-
                 }
             } else {
                 // No user is signed in.
@@ -190,9 +222,10 @@ export default class Profile extends Menu {
         });
     };
 
-    componentWillMount() {
+    componentDidMount() {
         this._renderProfil();
     }
+
 
 }
 

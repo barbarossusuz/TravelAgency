@@ -9,12 +9,8 @@ import {
 } from 'react-native';
 import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
-import Countries from "./Countries.json"
 import {Actions} from "react-native-router-flux";
 import {Container, Content} from 'native-base';
-
-
-var storageRef = firebaseRef.storage().ref("country/");
 
 
 export default class Country extends Menu {
@@ -60,10 +56,7 @@ export default class Country extends Menu {
                         <Image
                             style={{width: 400, height: 180, marginBottom: 3, marginTop: 3, borderRadius: 15}}
                             source={{
-                                uri:
-                                    // countries.url ?
-                                    // countries.url:
-                                    "http://www.jqueryscript.net/images/jQuery-Ajax-Loading-Overlay-with-Loading-Text-Spinner-Plugin.jpg"
+                                uri: countries.url
                             }}>
                             <View>
                                 <Text style={{
@@ -81,6 +74,8 @@ export default class Country extends Menu {
     }
     componentDidMount() {
         this.getData();
+        var user = firebaseRef.auth().currentUser;
+        console.log(user);
     }
 
     componentWillMount() {
