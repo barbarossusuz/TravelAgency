@@ -23,7 +23,6 @@ window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
 
 
-
 export default class Profile extends Menu {
 
     constructor(props) {
@@ -37,7 +36,8 @@ export default class Profile extends Menu {
             photoUrl: null,
             imageUri: null,
             password: null,
-            rePassword: null
+            rePassword: null,
+            photoSelected: false
         }
 
 
@@ -99,8 +99,6 @@ export default class Profile extends Menu {
                             autoCorrect={false}/>
 
 
-
-
                         <TouchableOpacity style={styles.buttonContainer} onPress={() => this._updateProfil()}>
                             <Text style={styles.updateButton}>Update Profil</Text>
                         </TouchableOpacity>
@@ -116,7 +114,7 @@ export default class Profile extends Menu {
 
 
         //Update Email
-        if(this.state.email !== null) {
+        if (this.state.email !== null) {
             user.updateEmail(this.state.email).then(() => {
                 ToastAndroid.showWithGravity("Update successful", ToastAndroid.SHORT, ToastAndroid.CENTER);
             }, (error) => {
@@ -128,22 +126,22 @@ export default class Profile extends Menu {
 
 
         //Update Name
-        if (this.state.name!==null) {
-                user.updateProfile({
-                    displayName: this.state.name
-                }).then(() => {
-                    ToastAndroid.showWithGravity("Update successful", ToastAndroid.SHORT, ToastAndroid.CENTER);
-                }, (error) => {
-                    var errorMessage = error.message;
-                    console.log("", errorMessage);
-                    ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
-                });
+        if (this.state.name !== null) {
+            user.updateProfile({
+                displayName: this.state.name
+            }).then(() => {
+                ToastAndroid.showWithGravity("Update successful", ToastAndroid.SHORT, ToastAndroid.CENTER);
+            }, (error) => {
+                var errorMessage = error.message;
+                console.log("", errorMessage);
+                ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
+            });
         }
 
         //Update Photo
-        if (this.state.photoUrl !== null) {
-            let uploadedPhotoUrl=this.uploadImage(this.state.photoUrl);
-            uploadedPhotoUrl.then((url)=>{
+        if (this.state.photoUrl !== null && this.state.photoSelected === true) {
+            let uploadedPhotoUrl = this.uploadImage(this.state.photoUrl);
+            uploadedPhotoUrl.then((url) => {
                 user.updateProfile({
                     photoURL: url
                 }).then(() => {
@@ -157,7 +155,7 @@ export default class Profile extends Menu {
         }
         //Update Password
         if (this.state.password !== null) {
-            if(this.state.password === this.state.rePassword) {
+            if (this.state.password === this.state.rePassword) {
                 user.updatePassword(this.state.password).then(() => {
                     ToastAndroid.showWithGravity("pass successful", ToastAndroid.LONG, ToastAndroid.CENTER);
                     firebaseRef.auth().signOut().then(function () {
@@ -233,7 +231,8 @@ export default class Profile extends Menu {
                 if (response) {
                     if ((response.path).replace(/^.*[\\\/]/, '').slice(-4) === ".png" || ".jpg") {
                         this.setState({
-                            photoUrl: response.uri
+                            photoUrl: response.uri,
+                            photoSelected: true
                         });
                     }
                     else {
@@ -246,7 +245,6 @@ export default class Profile extends Menu {
     }
 
 
-
     _renderProfil() {
         firebaseRef.auth().onAuthStateChanged((user1) => {
             if (user1) {
@@ -254,7 +252,7 @@ export default class Profile extends Menu {
                 if (user !== null) {
                     this.setState({
                         phName: user.displayName || "UserName",
-                        phEmail:user.email,
+                        phEmail: user.email,
                         name: user.displayName || "UserName",
                         email: user.email,
                         photoUrl: user.photoURL
