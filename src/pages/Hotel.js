@@ -12,6 +12,8 @@ import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
 import {Actions} from "react-native-router-flux";
 import {Container, Content} from 'native-base';
+import StarRating from 'react-native-star-rating';
+
 
 export default class Hotel extends Menu {
 
@@ -19,7 +21,9 @@ export default class Hotel extends Menu {
         super(props);
         this.state = {
             renderArr: [],
-            hotelData: []
+            hotelData: [],
+            userCount: 0
+
         };
     }
 
@@ -43,13 +47,23 @@ export default class Hotel extends Menu {
             let hotelData = this.state.hotelData;
             hotelData.map((hotels) => {
                 arr.push(
-                    <TouchableOpacity key={hotels.hotelName} onPress={() => this.goPage(hotels.content)}
+                    <TouchableOpacity key={hotels.content.key} onPress={() => this.goPage(hotels)}
                                       style={{marginRight: 5, marginBottom: 5,marginTop: 5}}>
                         <Image
                             style={{width: 400, height: 200}}
                             source={{
                                 uri: hotels.content.url
-                            }}/>
+                            }}>
+                            <View style={{width: 100,height:20}}>
+                            <StarRating
+                                disabled={true}
+                                maxStars={5}
+                                rating={hotels.content.starRate}
+                                starSize={20}
+                                starColor={'yellow'}
+                            /></View>
+
+                        </Image>
                         <View>
                             <Text style={{
                                 fontWeight: "300",
@@ -61,6 +75,7 @@ export default class Hotel extends Menu {
                                 color: "black",
                                 fontSize: 12
                             }}> {(this.props.cityKey).toUpperCase()} </Text>
+
                         </View>
                     </TouchableOpacity>
                 )
@@ -70,14 +85,31 @@ export default class Hotel extends Menu {
     }
 
 
+
     goPage(content) {
         setTimeout(() => {
             Actions.hoteldetails({hotelContent: content});
         }, 300);
     }
 
+    renderHoteStar(hotelName){
+        let hotelName= hotelName;
+        firebaseRef.database().ref("hotelStars/").once("value").then((value) => {
+            let value=value.val();
+
+            value.map((newValue)=>{
+                newValue.$(hotelName)
+            })
+        });
+        }
+
     componentDidMount() {
         this.getData();
+        firebaseRef.database().ref("hotelStars/").once("value").then((value) => {
+            let count = (value.val()).length;
+            this.setState({userCount: count})
+        });
+
     }
 
     shouldComponentUpdate(nextProps, nextState) {

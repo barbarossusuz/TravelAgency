@@ -12,6 +12,7 @@ import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
 import {Actions} from "react-native-router-flux";
 import {Container, Content} from 'native-base';
+import StarRating from 'react-native-star-rating';
 
 
 export default class HotelDetails extends Menu {
@@ -20,14 +21,14 @@ export default class HotelDetails extends Menu {
         super(props);
         this.state = {
             renderArr: [],
-            hotelData: []
+            hotelData: [],
         };
     }
 
     renderContent() {
 
         return (
-            <Container style={{alignItems: "center",backgroundColor: "#E0F2F1"}}>
+            <Container style={{alignItems: "center", backgroundColor: "#E0F2F1"}}>
                 <Content>
                     {this.getData()}
                 </Content>
@@ -41,38 +42,57 @@ export default class HotelDetails extends Menu {
         return (
             <Container>
                 <Content>
-                    <TouchableOpacity key={hotelContent.key} onPress={() => this.goPage("a")} style={{marginTop: 5}}>
+                    <TouchableOpacity key={hotelContent.content.key} onPress={() => this.goPage("a")} style={{marginTop: 5}}>
                         <View style={{flexDirection: "row"}}>
                             <View style={{flexDirection: "column"}}>
                                 <Image
                                     style={{width: 200, height: 200, marginRight: 5, marginBottom: 5}}
                                     source={{
-                                        uri: hotelContent.url2
+                                        uri: hotelContent.content.url2
                                     }}/>
                                 <Image
                                     style={{width: 200, height: 200, marginRight: 5}}
                                     source={{
-                                        uri: hotelContent.url3
+                                        uri: hotelContent.content.url3
                                     }}/>
                             </View>
                             <Image
                                 style={{width: 200, height: 405}}
                                 source={{
-                                    uri: hotelContent.url
+                                    uri: hotelContent.content.url
                                 }}/>
                         </View>
                     </TouchableOpacity>
+                    <View style={{width: 100, height: 20}}>
+                        <StarRating
+                            disabled={false}
+                            maxStars={5}
+                            rating={hotels.starRate}
+                            starSize={20}
+                            selectedStar={(rating) => this.onStarRatingPress(rating)}
+                            starColor={'yellow'}
+                        /></View>
                 </Content>
             </Container>
         );
     }
 
+    onStarRatingPress(rating) {
+        var user = firebaseRef.auth().currentUser;
+        let content = this.props.hotelContent;
+        let cityName = content.cityName;
+        let hotelName = content.content.key;
+        firebaseRef.database().ref("hotelStars/" + user.uid + "/" + hotelName).set({
+            rating
+        });
+    }
 
     goPage(key) {
         Actions.payment({hotelKey: key});
     }
 
     componentDidMount() {
+
     }
 
     shouldComponentUpdate(nextProps, nextState) {
