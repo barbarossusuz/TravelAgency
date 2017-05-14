@@ -141,7 +141,7 @@ export default class Profile extends Menu {
         }
 
         //Update Photo
-        if (this.state.photoUrl !== null || this.state.name!==null) {
+        if (this.state.photoUrl !== null) {
             let uploadedPhotoUrl=this.uploadImage(this.state.photoUrl);
             uploadedPhotoUrl.then((url)=>{
                 user.updateProfile({

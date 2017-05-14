@@ -56,20 +56,24 @@ export default class Hotel extends Menu {
                             }}>
                             <View style={{width: 100,height:20}}>
                             <StarRating
+                                emptyStar='md-star-outline'
+                                fullStar='md-star'
+                                halfStar='md-star-half'
+                                iconSet='Ionicons'
                                 disabled={true}
                                 maxStars={5}
-                                rating={hotels.content.starRate}
+                                rating={1}
                                 starSize={20}
                                 starColor={'yellow'}
-                            /></View>
-
+                            />
+                            </View>
                         </Image>
                         <View>
                             <Text style={{
                                 fontWeight: "300",
                                 color: "black",
                                 fontSize: 15
-                            }}> {(hotels.hotelName).toUpperCase()} </Text>
+                            }}> {(hotels.content.key).toUpperCase()} </Text>
                             <Text style={{
                                 fontWeight: "300",
                                 color: "black",
@@ -78,7 +82,8 @@ export default class Hotel extends Menu {
 
                         </View>
                     </TouchableOpacity>
-                )
+                );
+
             });
             this.setState({renderArr: arr});
         });
@@ -92,16 +97,22 @@ export default class Hotel extends Menu {
         }, 300);
     }
 
-    renderHoteStar(hotelName){
-        let hotelName= hotelName;
-        firebaseRef.database().ref("hotelStars/").once("value").then((value) => {
-            let value=value.val();
-
-            value.map((newValue)=>{
-                newValue.$(hotelName)
-            })
-        });
+    renderHotelStar(hotelName){
+            let newHotelName= hotelName;
+            let total=0;
+            let value2;
+            firebaseRef.database().ref("hotelStars/").once("value").then((value) => {
+                value2=value.val();
+            }).then(()=>{
+                for(newHotelName in value2) {
+                    total = newHotelName + total;
+                }
+                this.setState({total:total})
+            }).then(()=>{
+                return total/this.state.userCount;
+            });
         }
+
 
     componentDidMount() {
         this.getData();
@@ -109,7 +120,6 @@ export default class Hotel extends Menu {
             let count = (value.val()).length;
             this.setState({userCount: count})
         });
-
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -118,14 +128,5 @@ export default class Hotel extends Menu {
     }
 }
 const styles = StyleSheet.create({
-    loginButton: {
-        textAlign: "center",
-        color: "#000000",
-        fontWeight: "700"
-    },
-    registerButton: {
-        color: "#000000",
-        marginTop: 50,
-        opacity: 0.5
-    },
+
 });
