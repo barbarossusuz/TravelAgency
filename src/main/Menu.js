@@ -36,21 +36,18 @@ export default class Menu extends Component {
             <Drawer
                 ref={(drawer) => this.drawer = drawer}
                 type="overlay"
-                openDrawerOffset={width / 2}
+                openDrawerOffset={0.2}
                 tweenDuration={ 300 }
                 closedDrawerOffset={-3}
                 panCloseMask={0.2}
                 styles={drawerStyles}
-                tweenHandler={ (ratio) => {
-                    return {
-                        drawer: {shadowRadius: ratio < 0.2 ? ratio * 5 * 5 : 5},
-                        main: {opacity: (2 - ratio) / 2}
-                    }
-                }}
+                tweenHandler={(ratio) => ({
+                    main: { opacity:(2-ratio)/2 }
+                })}
                 tapToClose={true}
                 content={<SideBar closeToggle={this.closeDrawer}/>}>
                 <Container>
-                    <Head openToggle={this.openDrawer}/>
+                    <Head closeToggle={this.closeDrawer} openToggle={this.openDrawer}/>
                     {this.renderContent()}
                 </Container>
             </Drawer>

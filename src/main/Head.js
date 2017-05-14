@@ -23,7 +23,7 @@ export default class Head extends Component {
                     </View>
                 </Left>
                 <Body>
-                <TouchableOpacity onPress={() => Actions.welcomePage()}>
+                <TouchableOpacity onPress={() => Actions.welcomePage() }>
                 <Text>Travel Agency</Text>
                 </TouchableOpacity>
                 </Body>

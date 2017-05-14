@@ -10,114 +10,79 @@ import {
 } from 'react-native';
 import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
-import Hotels from "./Hotels.json"
 import {Actions} from "react-native-router-flux";
 import {Container, Content} from 'native-base';
-
-
-var storageRef = firebaseRef.storage().ref("hotel/");
-
 
 export default class Hotel extends Menu {
 
     constructor(props) {
         super(props);
         this.state = {
-            userData: null,
-            imageArr: []
+            renderArr: [],
+            hotelData: []
         };
-        this.cityKey = this.props.cityKey;
     }
 
     renderContent() {
 
-        console.log("key", this.cityKey);
         return (
-            <Container style={{alignItems: "center"}}>
+            <Container style={{alignItems: "center",backgroundColor: "#E0F2F1"}}>
                 <Content>
-                    {this.renderList()}
+                    {this.state.renderArr}
                 </Content>
             </Container>
         )
     }
 
 
-    renderList() {
-        let arr = [];
-        let content = [];
-
-        Hotels.map((hotelContent) => {
-            if (hotelContent.cityKey === this.cityKey) {
-                content = hotelContent.content;
-            }
-        });
-
-        if(content.length !==0) {
-            content.map((hotels) => {
-                let url = "";
-                (this.state.imageArr).map((imageArr) => {
-                    if (imageArr.key === hotels.key) {
-                        url = imageArr.url
-                    }
-                });
-                arr.push
-                (
-                    <TouchableOpacity key={hotels.price} onPress={() => this.goPage(hotel.price)}>
+    getData() {
+        firebaseRef.database().ref("hotel/" + this.props.cityKey).once("value").then((value) => {
+            this.setState({hotelData: value.val()})
+        }).then(() => {
+            let arr = [];
+            let hotelData = this.state.hotelData;
+            hotelData.map((hotels) => {
+                arr.push(
+                    <TouchableOpacity key={hotels.hotelName} onPress={() => this.goPage(hotels.content)}
+                                      style={{marginRight: 5, marginBottom: 5,marginTop: 5}}>
                         <Image
-                            style={{width: 400, height: 200, marginBottom: 5, marginTop: 5}}
+                            style={{width: 400, height: 200}}
                             source={{
-                                uri: "http://www.thefloridahotelorlando.com/var/floridahotelorlando/storage/images/media/images/photo-gallery/hotel-images/florida-hotel-orlando-night/27177-1-eng-US/Florida-Hotel-Orlando-Night.jpg"
-
-                            }}>
-                            <View>
-                                <Text style={{fontWeight:"300", color: "white",fontSize:18}}> {(hotels.hotel).toUpperCase()} </Text>
-                                <Text style={{fontWeight:"300", color: "white",fontSize:18}}> {hotels.price} </Text>
-                            </View>
-                        </Image>
+                                uri: hotels.content.url
+                            }}/>
+                        <View>
+                            <Text style={{
+                                fontWeight: "300",
+                                color: "black",
+                                fontSize: 15
+                            }}> {(hotels.hotelName).toUpperCase()} </Text>
+                            <Text style={{
+                                fontWeight: "300",
+                                color: "black",
+                                fontSize: 12
+                            }}> {(this.props.cityKey).toUpperCase()} </Text>
+                        </View>
                     </TouchableOpacity>
-                );
+                )
             });
-            return arr;
-        }else {
-            return <Text> Loading.. </Text>;
-        }
-
-
-    }
-
-    getimage() {
-        let imageArr = [];
-        let content = [];
-
-        Hotels.map((hotelContent) => {
-            if (hotelContent.cityKey === this.cityKey) {
-                content = hotelContent.content;
-            }
+            this.setState({renderArr: arr});
         });
-
-        if(content.length !==0) {
-            content.map((hotels) => {
-                storageRef.child(hotels.key + ".jpg").getDownloadURL().then((url) => {
-                    imageArr.push(
-                        {
-                            key: hotels.key,
-                            url: url
-                        }
-                    );
-                    this.setState({
-                        imageArr
-                    });
-                });
-            });
-        }
     }
 
-    goPage(key) {
-        Actions.payment({hotelKey: key});
+
+    goPage(content) {
+        setTimeout(() => {
+            Actions.hoteldetails({hotelContent: content});
+        }, 300);
     }
 
     componentDidMount() {
-        this.getimage();
+        this.getData();
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.props.cityKey !== nextProps.cityKey || this.state.renderArr !== nextState.renderArr;
+
     }
 }
 const styles = StyleSheet.create({

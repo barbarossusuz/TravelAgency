@@ -22,16 +22,22 @@ const fs = RNFetchBlob.fs;
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
 
+
+
 export default class Profile extends Menu {
 
     constructor(props) {
         super(props);
         this.state = {
             userData: null,
+            phName: null,
             name: null,
+            phEmail: null,
             email: null,
             photoUrl: null,
-            password: null
+            imageUri: null,
+            password: null,
+            rePassword: null
         }
 
 
@@ -55,21 +61,19 @@ export default class Profile extends Menu {
                 <View>
                     <View style={styles.formContainer}>
                         <TextInput
-                            placeholder="EMAIL"
-                            value={this.state.email}
+                            placeholder={this.state.phEmail}
                             returnKeyType="next"
                             onChangeText={(text) => this.setState({email: text})}
                             keyboardType="email-address"
-                            placeholderTextColor="#000000"
+                            placeholderTextColor="#BABABA"
                             style={styles.input}
                             autoCapitalize="none"
                             autoCorrect={false}/>
                         <TextInput
-                            placeholder="NAME"
-                            value={this.state.name}
+                            placeholder={this.state.phName}
                             returnKeyType="next"
                             onChangeText={(text) => this.setState({name: text})}
-                            placeholderTextColor="#000000"
+                            placeholderTextColor="#BABABA"
                             style={styles.input}
                             autoCapitalize="none"
                             autoCorrect={false}/>
@@ -78,11 +82,23 @@ export default class Profile extends Menu {
                             value={this.state.password}
                             returnKeyType="done"
                             onChangeText={(text) => this.setState({password: text})}
-                            placeholderTextColor="#000000"
+                            placeholderTextColor="#BABABA"
                             style={styles.input}
                             autoCapitalize="none"
                             secureTextEntry={true}
                             autoCorrect={false}/>
+                        <TextInput
+                            placeholder="CONFIRM PASSWORD"
+                            value={this.state.password}
+                            returnKeyType="done"
+                            onChangeText={(text) => this.setState({rePassword: text})}
+                            placeholderTextColor="#BABABA"
+                            style={styles.input}
+                            autoCapitalize="none"
+                            secureTextEntry={true}
+                            autoCorrect={false}/>
+
+
 
 
                         <TouchableOpacity style={styles.buttonContainer} onPress={() => this._updateProfil()}>
@@ -98,37 +114,101 @@ export default class Profile extends Menu {
     _updateProfil() {
         var user = firebaseRef.auth().currentUser;
 
-        console.log(user);
 
         //Update Email
-        user.updateEmail(this.state.email).then(() => {
-        }, (error) => {
-            var errorMessage = error.message;
-            console.log("", errorMessage);
-            ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
-        });
-
-        //Update Password
-        if (this.state.password !== null) {
-            user.updatePassword(this.state.password).then(() => {
-                ToastAndroid.showWithGravity("pass successful", ToastAndroid.LONG, ToastAndroid.CENTER);
-                this.setState({password: null});
-            }, function (error) {
+        if(this.state.email !== null) {
+            user.updateEmail(this.state.email).then(() => {
+                ToastAndroid.showWithGravity("Update successful", ToastAndroid.SHORT, ToastAndroid.CENTER);
+            }, (error) => {
                 var errorMessage = error.message;
+                console.log("", errorMessage);
+                ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
             });
         }
-        //Update Name and Photo
-        user.updateProfile({
-            displayName: this.state.name,
-            photoURL: this.state.photoUrl
-        }).then(() => {
-            ToastAndroid.showWithGravity("Update successful", ToastAndroid.SHORT, ToastAndroid.CENTER);
-        }, (error) => {
-            var errorMessage = error.message;
-            console.log("", errorMessage);
-            ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
-        });
+
+
+        //Update Name
+        if (this.state.name!==null) {
+                user.updateProfile({
+                    displayName: this.state.name
+                }).then(() => {
+                    ToastAndroid.showWithGravity("Update successful", ToastAndroid.SHORT, ToastAndroid.CENTER);
+                }, (error) => {
+                    var errorMessage = error.message;
+                    console.log("", errorMessage);
+                    ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
+                });
+        }
+
+        //Update Photo
+        if (this.state.photoUrl !== null || this.state.name!==null) {
+            let uploadedPhotoUrl=this.uploadImage(this.state.photoUrl);
+            uploadedPhotoUrl.then((url)=>{
+                user.updateProfile({
+                    photoURL: url
+                }).then(() => {
+                    ToastAndroid.showWithGravity("Update successful", ToastAndroid.SHORT, ToastAndroid.CENTER);
+                }, (error) => {
+                    var errorMessage = error.message;
+                    console.log("", errorMessage);
+                    ToastAndroid.showWithGravity(errorMessage, ToastAndroid.SHORT, ToastAndroid.CENTER);
+                });
+            });
+        }
+        //Update Password
+        if (this.state.password !== null) {
+            if(this.state.password === this.state.rePassword) {
+                user.updatePassword(this.state.password).then(() => {
+                    ToastAndroid.showWithGravity("pass successful", ToastAndroid.LONG, ToastAndroid.CENTER);
+                    firebaseRef.auth().signOut().then(function () {
+                        Actions.login();
+                    }).catch(function (error) {
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+
+                        ToastAndroid.showWithGravity(errorCode, ToastAndroid.SHORT, ToastAndroid.CENTER);
+                    });
+                }, function (error) {
+                    var errorMessage = error.message;
+                });
+            }
+            else {
+                ToastAndroid.showWithGravity("Passwords do not match!!", ToastAndroid.SHORT, ToastAndroid.CENTER);
+            }
+        }
+
         Keyboard.dismiss();
+    }
+
+    uploadImage(uri, mime = 'img/jpg') {
+
+        return new Promise((resolve, reject) => {
+            const uploadUri = uri;
+            let uploadBlob = null;
+
+            var user = firebaseRef.auth().currentUser;
+            const imageRef = firebaseRef.storage().ref("userProfilePhoto/").child(user.uid + ".jpg");
+
+            fs.readFile(uploadUri, 'base64')
+                .then((data) => {
+                    return Blob.build(data, {type: `${mime};BASE64`})
+                })
+                .then((blob) => {
+                    uploadBlob = blob;
+                    return imageRef.put(blob, {contentType: mime})
+                })
+                .then(() => {
+                    uploadBlob.close();
+                    return imageRef.getDownloadURL()
+                })
+                .then((url) => {
+                    resolve(url)
+
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        })
     }
 
     _onPressPhoto() {
@@ -155,7 +235,6 @@ export default class Profile extends Menu {
                         this.setState({
                             photoUrl: response.uri
                         });
-                        this.uploadImage(response.uri);
                     }
                     else {
                         ToastAndroid.showWithGravity("Selected file is not a png or jpg file", ToastAndroid.LONG, ToastAndroid.TOP);
@@ -166,44 +245,7 @@ export default class Profile extends Menu {
         });
     }
 
-    uploadImage(uri,mime = 'img/jpg'){
 
-        return new Promise((resolve, reject) => {
-            const uploadUri =  uri;
-            let uploadBlob = null;
-
-            const imageRef = firebaseRef.storage().ref("userProfilePhoto/").child("deneme.jpg");
-
-            fs.readFile(uploadUri, 'base64')
-                .then((data) => {
-                    return Blob.build(data, { type: `${mime};BASE64` })
-                })
-                .then((blob) => {
-                    uploadBlob = blob;
-                    return imageRef.put(blob, { contentType: mime })
-                })
-                .then(() => {
-                    uploadBlob.close();
-                    return imageRef.getDownloadURL()
-                })
-                .then((url) => {
-                    resolve(url)
-                })
-                .catch((error) => {
-                    reject(error)
-                })
-        })
-    }
-
-    _checkPhotoExist = () => {
-        // RNFetchBlob.fs.exists(this.state.photoUrl)
-        //     .then((exist) => {
-        //         if (exist === true)
-        //             this.setState({newPhotoUrl: this.state.photoUrl});
-        //         else
-        //             this.setState({newPhotoUrl: "https://img.clipartfest.com/5a68d99cd467003c04b4ef64004c4313_download-this-image-as-profile-clipart_600-557.png"});
-        //     })
-    };
 
     _renderProfil() {
         firebaseRef.auth().onAuthStateChanged((user1) => {
@@ -211,7 +253,9 @@ export default class Profile extends Menu {
                 var user = firebaseRef.auth().currentUser;
                 if (user !== null) {
                     this.setState({
-                        name: user.displayName || "Name",
+                        phName: user.displayName || "UserName",
+                        phEmail:user.email,
+                        name: user.displayName || "UserName",
                         email: user.email,
                         photoUrl: user.photoURL
                     });

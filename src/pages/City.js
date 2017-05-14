@@ -10,12 +10,8 @@ import {
 } from 'react-native';
 import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
-import Cities from "./Cities.json"
 import {Actions} from "react-native-router-flux";
 import {Container, Content} from 'native-base';
-
-
-var storageRef = firebaseRef.storage().ref("city/");
 
 
 export default class City extends Menu {
@@ -23,101 +19,62 @@ export default class City extends Menu {
     constructor(props) {
         super(props);
         this.state = {
-            userData: null,
-            imageArr: []
+            renderArr: [],
+            cityData:[]
         };
-        this.countryKey = this.props.countryKey;
     }
 
     renderContent() {
 
-        console.log("key", this.countryKey);
+        console.log("key", this.props.countryKey);
         return (
-            <Container style={{alignItems: "center"}}>
+            <Container style={{alignItems: "center",backgroundColor: "#E0F2F1"}}>
                 <Content>
-                    {this.renderList()}
+                    {this.state.renderArr}
                 </Content>
             </Container>
         )
     }
 
 
-    renderList() {
-        let arr = [];
-        let content = [];
-
-        Cities.map((cityContent) => {
-            if (cityContent.countryKey === this.countryKey) {
-                content = cityContent.content;
-            }
-        });
-
-        if(content.length !==0) {
-            content.map((cities) => {
-                let url = "";
-                (this.state.imageArr).map((imageArr) => {
-                    if (imageArr.key === cities.key) {
-                        url = imageArr.url
-                    }
+    getData(){
+        firebaseRef.database().ref("city/"+this.props.countryKey).once("value").then( (value)=> {
+            this.setState({cityData: value.val()})
+        }).then(()=>{
+            let arr=[];
+            let cityData = this.state.cityData;
+            cityData.map((cities) => {
+                    arr.push(
+                        <TouchableOpacity key={cities.cityName} onPress={() => this.goPage(cities.cityName)}>
+                            <Image
+                                style={{width: 400, height: 200, marginBottom: 5, marginTop: 5}}
+                                source={{
+                                    uri: cities.content.url
+                                }}>
+                                <View>
+                                    <Text style={{fontWeight:"300", color: "white",fontSize:18}}> {(cities.cityName).toUpperCase()} </Text>
+                                </View>
+                            </Image>
+                        </TouchableOpacity>
+                    )
                 });
-                arr.push
-                (
-                    <TouchableOpacity key={cities.key} onPress={() => this.goPage(cities.key)}>
-                        <Image
-                            style={{width: 400, height: 200, marginBottom: 5, marginTop: 5}}
-                            source={{
-                                uri: url ? url : "http://www.jqueryscript.net/images/jQuery-Ajax-Loading-Overlay-with-Loading-Text-Spinner-Plugin.jpg"
-
-                            }}>
-                            <View>
-                                <Text style={{fontWeight:"300", color: "white",fontSize:18}}> {(cities.key).toUpperCase()} </Text>
-                                <Text style={{fontWeight:"300", color: "white",fontSize:18}}> {cities.hotels} </Text>
-                            </View>
-                        </Image>
-                    </TouchableOpacity>
-                );
-            });
-            return arr;
-        }else {
-            return <Text> Loading.. </Text>;
-        }
-
-
+            this.setState({renderArr:arr});
+        });
     }
 
-    getimage() {
-        let imageArr = [];
-        let content = [];
-
-        Cities.map((cityContent) => {
-            if (cityContent.countryKey === this.countryKey) {
-                content = cityContent.content;
-            }
-        });
-
-        if(content.length !==0) {
-            content.map((cities) => {
-                storageRef.child(cities.key + ".jpg").getDownloadURL().then((url) => {
-                    imageArr.push(
-                        {
-                            key: cities.key,
-                            url: url
-                        }
-                    );
-                    this.setState({
-                        imageArr
-                    });
-                });
-            });
-        }
-    }
 
     goPage(key) {
-        Actions.hotel({cityKey: key});
+        setTimeout(() => {
+            Actions.hotel({cityKey: key});
+        }, 300);
     }
 
     componentDidMount() {
-        this.getimage();
+        this.getData();
+    }
+
+    shouldComponentUpdate(nextProps,nextState){
+        return this.props.countryKey !== nextProps.countryKey || this.state.renderArr !== nextState.renderArr;
     }
 }
 const styles = StyleSheet.create({

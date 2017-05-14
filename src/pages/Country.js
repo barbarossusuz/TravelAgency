@@ -18,8 +18,6 @@ export default class Country extends Menu {
     constructor(props) {
         super(props);
         this.state = {
-            userData: null,
-            url: null,
             renderArr: [],
             countryData: []
         };
@@ -27,8 +25,7 @@ export default class Country extends Menu {
 
     renderContent() {
         return (
-            <Container style={{alignItems: "center"}}>
-                <Text> COUNTRIES </Text>
+            <Container style={{alignItems: "center",backgroundColor: "#E0F2F1"}}>
                 <Content>
                     {this.state.renderArr}
                 </Content>
@@ -38,7 +35,9 @@ export default class Country extends Menu {
 
 
     goPage(key) {
-        Actions.city({countryKey: key});
+        setTimeout(() => {
+            Actions.city({countryKey: key});
+        }, 300);
     }
 
 
@@ -74,22 +73,13 @@ export default class Country extends Menu {
     }
     componentDidMount() {
         this.getData();
-        var user = firebaseRef.auth().currentUser;
-        console.log(user);
+        firebaseRef.database().ref("city").once("value").then( (value)=> {
+            console.log("city",value.val());
+        });
+
     }
 
     componentWillMount() {
-
-        // AsyncStorage.getItem('userData').then((user_data_json) => {
-        //     let userData = JSON.parse(user_data_json);
-        //     this.setState({
-        //         userData: userData
-        //     });
-        //     firebaseRef.database().ref("users/" + this.state.userData.uid).set({
-        //         name: this.state.userData.displayName,
-        //         email: this.state.userData.email
-        //     });
-        // });
 
     }
 }

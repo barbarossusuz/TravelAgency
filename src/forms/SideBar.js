@@ -33,10 +33,7 @@ export default class SideBar extends Component {
 
     render() {
         return (
-            <View style={{backgroundColor: "#E0F2F1", width: width / 1.2, height: height, flexDirection: "column"}}>
-
-                <Button transparent onPress={this.props.closeToggle}><Icon size={25} color="black"
-                                                                           name='md-menu'/></Button>
+        <View style={{backgroundColor: "#B2DFDB", width: width / 1.2, height: height, flexDirection: "column"}}>
 
                 <View style={{flexDirection: "column", padding: 20}}>
 
@@ -47,8 +44,8 @@ export default class SideBar extends Component {
                     </TouchableOpacity>
 
                     <View style={{marginTop: 10}}>
-                        <Text style={styles.profileText}>{this.state.name}</Text>
-                        <Text style={styles.profileText}>{this.state.email}</Text>
+                        <Text style={styles.profileText}>{(this.state.name ===null)? null:(this.state.name).toUpperCase()}</Text>
+                        <Text style={styles.profileText}>{(this.state.email ===null)? null:(this.state.email).toUpperCase()}</Text>
                     </View>
                 </View>
 
@@ -69,20 +66,9 @@ export default class SideBar extends Component {
                         <Text style={styles.listText}>Log Out</Text>
                     </TouchableOpacity>
                 </View>
-
-            </View>
+         </View>
         );
     }
-
-    _checkPhotoExist=()=> {
-        // RNFetchBlob.fs.exists(this.state.photoUrl)
-        //     .then((exist) => {
-        //         if (exist===true)
-        //             this.setState({newPhotoUrl:this.state.photoUrl});
-        //         else
-        //             this.setState({newPhotoUrl:"https://img.clipartfest.com/5a68d99cd467003c04b4ef64004c4313_download-this-image-as-profile-clipart_600-557.png"});
-        //     })
-    };
 
     _logOut() {
         console.log("tıklandı");
@@ -105,7 +91,7 @@ export default class SideBar extends Component {
                 var user = firebaseRef.auth().currentUser;
                 if (user !== null) {
                     this.setState({
-                        name: user.displayName || "Name",
+                        name: user.displayName ,
                         email: user.email,
                         photoUrl: user.photoURL
                     });
@@ -137,8 +123,7 @@ const styles = StyleSheet.create({
     },
     touchable: {
         flexDirection: "row",
-        marginBottom: 15,
-        width: 100
+        marginBottom: 15
     },
     profileText: {
         fontSize: 18,
