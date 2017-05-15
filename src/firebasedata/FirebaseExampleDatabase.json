@@ -1,0 +1,108 @@
+{
+  "city" : {
+    "france" : [ {
+      "cityName" : "paris",
+      "content" : {
+        "hotels" : "1",
+        "key" : "paris",
+        "url" : "https://firebasestorage.googleapis.com/v0/b/travelagency-32090.appspot.com/o/city%2Fparis.jpg?alt=media&token=3b14d058-5cc6-4027-b2e1-0f6c88335a10"
+      }
+    }, {
+      "cityName" : "lyon",
+      "content" : {
+        "hotels" : "2",
+        "key" : "lyon",
+        "url" : "https://firebasestorage.googleapis.com/v0/b/travelagency-32090.appspot.com/o/city%2Flyon.jpg?alt=media&token=4df9493d-4213-4856-bd07-39829a0488dc"
+      }
+    } ],
+    "italia" : [ {
+      "cityName" : "pisa",
+      "content" : {
+        "hotels" : "3",
+        "key" : "pisa",
+        "url" : "https://firebasestorage.googleapis.com/v0/b/travelagency-32090.appspot.com/o/city%2Fpisa.jpg?alt=media&token=56da17c5-4186-4855-8026-fc777b2909ac"
+      }
+    }, {
+      "cityName" : "milano",
+      "content" : {
+        "hotels" : "4",
+        "key" : "milano",
+        "url" : "https://firebasestorage.googleapis.com/v0/b/travelagency-32090.appspot.com/o/city%2Fmilano.jpg?alt=media&token=be76498d-c2aa-4677-94b3-350569f81872"
+      }
+    } ],
+    "spain" : [ {
+      "cityName" : "madrid",
+      "content" : {
+        "hotels" : "5",
+        "key" : "madrid",
+        "url" : "https://firebasestorage.googleapis.com/v0/b/travelagency-32090.appspot.com/o/city%2Fmadrid.jpg?alt=media&token=e0c07984-e6ef-4f02-9d0c-e08221fe209a"
+      }
+    }, {
+      "cityName" : "barcelona",
+      "content" : {
+        "hotels" : "6",
+        "key" : "barcelona",
+        "url" : "https://firebasestorage.googleapis.com/v0/b/travelagency-32090.appspot.com/o/city%2Fbarcelona.jpg?alt=media&token=b32cd879-b532-4ee0-95e8-f3a0db39a94a"
+      }
+    } ]
+  },
+  "country" : [ {
+    "key" : "france",
+    "url" : "https://firebasestorage.googleapis.com/v0/b/travelagency-32090.appspot.com/o/country%2Ffrance.jpg?alt=media&token=096732b9-dbff-474a-93ac-a4cab93a254a"
+  }, {
+    "key" : "italia",
+    "url" : "https://firebasestorage.googleapis.com/v0/b/travelagency-32090.appspot.com/o/country%2Fitalia.jpg?alt=media&token=5e6d7aaf-49e7-457f-a9f3-651eca84da96"
+  }, {
+    "key" : "spain",
+    "url" : "https://firebasestorage.googleapis.com/v0/b/travelagency-32090.appspot.com/o/country%2Fspain.jpg?alt=media&token=03351779-4618-4515-a37e-cff182bcd6a7"
+  } ],
+  "hotel" : {
+    "paris" : [ {
+      "cityName" : "paris",
+      "content" : {
+        "hotelName" : "Studio rue de Montmartre",
+        "key" : 0,
+        "price" : 50,
+        "starRate" : 1,
+        "url" : "https://s-ec.bstatic.com/images/hotel/max1024x768/729/72989852.jpg",
+        "url2" : "https://s-ec.bstatic.com/images/hotel/max1024x768/729/72991346.jpg",
+        "url3" : "https://s-ec.bstatic.com/images/hotel/max1024x768/729/72990261.jpg"
+      }
+    }, {
+      "cityName" : "paris",
+      "content" : {
+        "hotelName" : "Appartement de Charme à Opéra-Louvre",
+        "key" : 1,
+        "price" : 60,
+        "starRate" : 2,
+        "url" : "https://t-ec.bstatic.com/images/hotel/max1024x768/637/63705695.jpg",
+        "url2" : "https://t-ec.bstatic.com/images/hotel/max1024x768/637/63705729.jpg",
+        "url3" : "https://s-ec.bstatic.com/images/hotel/max1024x768/637/63705712.jpg"
+      }
+    } ]
+  },
+  "hotelStars" : {
+    "MStTVjxEK1e6EXotAeBa2QUAJAb2" : [ {
+      "hotelKey" : 0,
+      "hotelName" : "Studio rue de Montmartre",
+      "rated" : true,
+      "rating" : 3
+    }, {
+      "hotelKey" : 1,
+      "hotelName" : "Appartement de Charme à Opéra-Louvre",
+      "rated" : true,
+      "rating" : 1
+    } ],
+    "dnJ4A8KAclO8MuPF74LKTbDwaJp1" : [ {
+      "hotelKey" : 0,
+      "hotelName" : "Studio rue de Montmartre",
+      "rated" : true,
+      "rating" : 1
+    }, {
+      "hotelKey" : 1,
+      "hotelName" : "Appartement de Charme à Opéra-Louvre",
+      "rated" : false,
+      "rating" : 0
+    } ]
+  }
+}

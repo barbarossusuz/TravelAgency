@@ -48,7 +48,6 @@ export default class Country extends Menu {
             let arr =[];
             let countryData = this.state.countryData;
             countryData.map((countries) => {
-                console.log(countries);
                 arr.push
                 (
                     <TouchableOpacity key={countries.key} onPress={() => this.goPage(countries.key)}>
@@ -73,10 +72,6 @@ export default class Country extends Menu {
     }
     componentDidMount() {
         this.getData();
-        firebaseRef.database().ref("city").once("value").then( (value)=> {
-            console.log("city",value.val());
-        });
-
     }
 
     componentWillMount() {

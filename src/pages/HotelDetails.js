@@ -22,29 +22,30 @@ export default class HotelDetails extends Menu {
         this.state = {
             renderArr: [],
             hotelData: [],
-            starRate: 2.5,
+            userStarRate: this.props.userStarRate,
             hotelContent: this.props.hotelContent,
             total: 0,
-            userCount:0
+            userCount: 0,
         };
     }
 
     renderContent() {
-
         return (
+
             <Content style={{backgroundColor: "#E0F2F1"}}>
+                {this.getData()}
                 <StarRating
                     emptyStar='md-star-outline'
                     fullStar='md-star'
                     halfStar='md-star-half'
                     iconSet='Ionicons'
                     disabled={false}
+                    rating={this.state.userStarRate}
                     maxStars={5}
-                    starSize={20}
+                    starSize={40}
                     selectedStar={(rating) => this.onStarRatingPress(rating)}
                     starColor='yellow'
                 />
-                {this.getData()}
             </Content>
         )
     }
@@ -53,80 +54,90 @@ export default class HotelDetails extends Menu {
     getData() {
         let hotelContent = this.state.hotelContent;
         return (
-            <View style={{alignItems:"center"}}>
-                    <TouchableOpacity key={hotelContent.content.key} onPress={() => this.goPage("a")}
-                                      style={{marginTop: 5}}>
-                        <View style={{flexDirection: "row"}}>
-                            <View style={{flexDirection: "column"}}>
-                                <Image
-                                    style={{width: 200, height: 200, marginRight: 5, marginBottom: 5}}
-                                    source={{
-                                        uri: hotelContent.content.url2
-                                    }}/>
-                                <Image
-                                    style={{width: 200, height: 200, marginRight: 5}}
-                                    source={{
-                                        uri: hotelContent.content.url3
-                                    }}/>
-                            </View>
+            <View style={{alignItems: "center"}}>
+                <TouchableOpacity key={hotelContent.content.key} onPress={() => this.goPage("a")}
+                                  style={{marginTop: 5}}>
+                    <View style={{flexDirection: "row"}}>
+                        <View style={{flexDirection: "column"}}>
                             <Image
-                                style={{width: 200, height: 405}}
+                                style={{width: 200, height: 200, marginRight: 5, marginBottom: 5}}
                                 source={{
-                                    uri: hotelContent.content.url
+                                    uri: hotelContent.content.url2
+                                }}/>
+                            <Image
+                                style={{width: 200, height: 200, marginRight: 5}}
+                                source={{
+                                    uri: hotelContent.content.url3
                                 }}/>
                         </View>
-                    </TouchableOpacity>
-                    <View style={{width: 100, height: 20}}>
-                        <Text>{this.state.total}</Text>
+                        <Image
+                            style={{width: 200, height: 405}}
+                            source={{
+                                uri: hotelContent.content.url
+                            }}/>
                     </View>
+                </TouchableOpacity>
+                <View style={{width: 100, height: 20}}>
+                    <Text>{this.state.total}</Text>
+                </View>
             </View>
         );
     }
 
-    renderHotelStar(){
-
-        let newHotelName= this.state.hotelContent.content.key;
-        let total=0;
-        let value2;
-        firebaseRef.database().ref("hotelStars/").once("value").then((value) => {
-            value2=value.val();
-            for(newHotelName in value2) {
-                total = newHotelName + total;
-            }
-        }).then(()=>{
-            let newtotal;
-            newtotal=total/this.state.userCount;
-            this.setState({total:newtotal});
-            console.log("newtotal",newtotal);
-        });
-    }
-
     onStarRatingPress(rating) {
-        this.setState({
-            starRate: rating
-        });
+        var user = firebaseRef.auth().currentUser;
+        let content = this.props.hotelContent;
+        let hotelKey = content.content.key;
+        let hotelName = content.content.hotelName;
 
-        // var user = firebaseRef.auth().currentUser;
-        // let content = this.props.hotelContent;
-        // let cityName = content.cityName;
-        // let hotelName = content.content.key;
-        // firebaseRef.database().ref("hotelStars/" + user.uid + "/" + hotelName).set({
-        //     rating
-        // });
+        firebaseRef.database().ref("hotelStars/" + user.uid + "/" + hotelKey).set({
+            rated: true,
+            rating: rating,
+            hotelName: hotelName,
+            hotelKey: hotelKey
+        }).then(() => {
+            this.setState({
+                userStarRate: rating
+            });
+            this.forceUpdate();
+            this.getUserCount();
+        });
     }
 
     goPage(key) {
         Actions.payment({hotelKey: key});
-
     }
 
-    componentDidMount() {
+    getUserCount() {
+        let count = 0;
+        let total = 0;
+        let starRate = 0;
+        let user = firebaseRef.auth().currentUser;
+        let content = this.props.hotelContent;
+        let hotelKey = content.content.key;
         firebaseRef.database().ref("hotelStars/").once("value").then((value) => {
-            let count = (value.val()).length;
-            this.setState({userCount: count});
-            this.renderHotelStar();
+            let obj = (value.val());
+            let objArr = Object.keys(obj);
 
+
+            for (let i = 0; i < objArr.length; i++) {
+                if (obj[objArr[i]])
+                    (obj[objArr[i]]).map((insideObj) => {
+                        if (insideObj.rated === true && insideObj.hotelKey === hotelKey) {
+                            count = count + 1;
+                            total = total + (insideObj.rating);
+                        }
+                    });
+                starRate=total/count;
+            }
+        }).then(() => {
+            firebaseRef.database().ref("hotel/" + content.cityName + "/"+content.content.key+"/content").update({
+                starRate: starRate
+            });
         });
+    };
+
+    componentDidMount() {
     }
 
     shouldComponentUpdate(nextProps, nextState) {

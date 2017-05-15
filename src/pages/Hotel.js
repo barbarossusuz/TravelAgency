@@ -62,7 +62,7 @@ export default class Hotel extends Menu {
                                 iconSet='Ionicons'
                                 disabled={true}
                                 maxStars={5}
-                                rating={1}
+                                rating={hotels.content.starRate}
                                 starSize={20}
                                 starColor={'yellow'}
                             />
@@ -73,7 +73,7 @@ export default class Hotel extends Menu {
                                 fontWeight: "300",
                                 color: "black",
                                 fontSize: 15
-                            }}> {(hotels.content.key).toUpperCase()} </Text>
+                            }}> {(hotels.content.hotelName).toUpperCase()} </Text>
                             <Text style={{
                                 fontWeight: "300",
                                 color: "black",
@@ -91,35 +91,25 @@ export default class Hotel extends Menu {
 
 
 
-    goPage(content) {
+    goPage(content1) {
         setTimeout(() => {
-            Actions.hoteldetails({hotelContent: content});
+            var user = firebaseRef.auth().currentUser;
+            let content = content1;
+            let hotelKey = content.content.key;
+            let userRate=0;
+            firebaseRef.database().ref("hotelStars/" + user.uid + "/" + hotelKey).once("value").then((userStar)=>{
+                userRate= userStar.val().rating;
+            }).then(()=>{
+                Actions.hoteldetails({hotelContent: content,userStarRate:userRate});
+            });
         }, 300);
     }
 
-    renderHotelStar(hotelName){
-            let newHotelName= hotelName;
-            let total=0;
-            let value2;
-            firebaseRef.database().ref("hotelStars/").once("value").then((value) => {
-                value2=value.val();
-            }).then(()=>{
-                for(newHotelName in value2) {
-                    total = newHotelName + total;
-                }
-                this.setState({total:total})
-            }).then(()=>{
-                return total/this.state.userCount;
-            });
-        }
 
 
     componentDidMount() {
         this.getData();
-        firebaseRef.database().ref("hotelStars/").once("value").then((value) => {
-            let count = (value.val()).length;
-            this.setState({userCount: count})
-        });
+
     }
 
     shouldComponentUpdate(nextProps, nextState) {
