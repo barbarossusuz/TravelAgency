@@ -1,12 +1,10 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
     StyleSheet,
     Text,
     View,
     TouchableOpacity,
-    Image,
-    AsyncStorage,
-    ToastAndroid
+    Image
 } from 'react-native';
 import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
@@ -30,7 +28,7 @@ export default class Hotel extends Menu {
     renderContent() {
 
         return (
-            <Container style={{alignItems: "center",backgroundColor: "#E0F2F1"}}>
+            <Container style={{alignItems: "center",backgroundColor: "#fbfaff"}}>
                 <Content>
                     {this.state.renderArr}
                 </Content>

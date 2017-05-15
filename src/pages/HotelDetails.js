@@ -1,17 +1,14 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
-    StyleSheet,
     Text,
     View,
     TouchableOpacity,
-    Image,
-    AsyncStorage,
-    ToastAndroid
+    Image
 } from 'react-native';
 import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
 import {Actions} from "react-native-router-flux";
-import {Container, Content} from 'native-base';
+import {Content} from 'native-base';
 import StarRating from 'react-native-star-rating';
 
 
@@ -32,7 +29,7 @@ export default class HotelDetails extends Menu {
     renderContent() {
         return (
 
-            <Content style={{backgroundColor: "#E0F2F1"}}>
+            <Content style={{backgroundColor: "#fbfaff"}}>
                 {this.getData()}
                 <StarRating
                     emptyStar='md-star-outline'
@@ -145,15 +142,3 @@ export default class HotelDetails extends Menu {
 
     }
 }
-const styles = StyleSheet.create({
-    loginButton: {
-        textAlign: "center",
-        color: "#000000",
-        fontWeight: "700"
-    },
-    registerButton: {
-        color: "#000000",
-        marginTop: 50,
-        opacity: 0.5
-    },
-});

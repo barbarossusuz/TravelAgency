@@ -1,11 +1,9 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
-    StyleSheet,
     Text,
     View,
     TouchableOpacity,
-    Image,
-    AsyncStorage
+    Image
 } from 'react-native';
 import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
@@ -25,7 +23,7 @@ export default class Country extends Menu {
 
     renderContent() {
         return (
-            <Container style={{alignItems: "center",backgroundColor: "#E0F2F1"}}>
+            <Container style={{alignItems: "center",backgroundColor: "#fbfaff"}}>
                 <Content>
                     {this.state.renderArr}
                 </Content>
@@ -78,15 +76,3 @@ export default class Country extends Menu {
 
     }
 }
-const styles = StyleSheet.create({
-    loginButton: {
-        textAlign: "center",
-        color: "#000000",
-        fontWeight: "700"
-    },
-    registerButton: {
-        color: "#000000",
-        marginTop: 50,
-        opacity: 0.5
-    },
-});

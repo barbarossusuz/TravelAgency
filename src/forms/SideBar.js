@@ -56,9 +56,9 @@ export default class SideBar extends Component {
                         <Text style={styles.listText}>Profile</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.touchable} onPress={() => Actions.profile()}>
+                    <TouchableOpacity style={styles.touchable} onPress={() => Actions.hotelsearch()}>
                         <Icon style={{marginRight: 25}} size={25} color="grey" name='md-search'/>
-                        <Text style={styles.listText}>Ara</Text>
+                        <Text style={styles.listText}>Hotel Search</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.touchable} onPress={() => this._logOut()}>

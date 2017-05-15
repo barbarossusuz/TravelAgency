@@ -2,7 +2,6 @@
 import React, {Component} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {
-    AsyncStorage,
     View,
     ActivityIndicator,
     Image

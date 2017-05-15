@@ -1,12 +1,10 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
     StyleSheet,
     Text,
     View,
     TouchableOpacity,
     ToastAndroid,
-    AsyncStorage,
-    Button,
     Image,
     TextInput,
     Keyboard

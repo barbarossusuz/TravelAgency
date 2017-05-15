@@ -14,6 +14,7 @@ import Profile from "./src/forms/Profile";
 import City from "./src/pages/City";
 import Hotel from "./src/pages/Hotel";
 import HotelDetails from "./src/pages/HotelDetails";
+import HotelSearch from "./src/pages/HotelSearch";
 
 
 
@@ -37,6 +38,7 @@ export default class TravelAgency extends Component {
                 <Scene key="city" component={City} hideNavBar={true}/>
                 <Scene key="hotel" component={Hotel} hideNavBar={true}/>
                 <Scene key="hoteldetails" component={HotelDetails} hideNavBar={true}/>
+                <Scene key="hotelsearch" component={HotelSearch} hideNavBar={true}/>
               </Scene>
             </Router>
         )
