@@ -109,7 +109,6 @@ export default class HotelDetails extends Menu {
         let count = 0;
         let total = 0;
         let starRate = 0;
-        let user = firebaseRef.auth().currentUser;
         let content = this.props.hotelContent;
         let hotelKey = content.content.key;
         firebaseRef.database().ref("hotelStars/").once("value").then((value) => {
