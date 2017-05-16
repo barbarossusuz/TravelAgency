@@ -28,14 +28,13 @@ export default class HotelSearch extends Menu {
     renderContent() {
         return (
                 <Content style={{backgroundColor: "#fbfaff"}}>
-                    <View style={{justifyContent: "center"}}>
-
+                    <View style={{justifyContent: "center",padding:10,marginTop:8,marginBottom:8}}>
                         <Item floatingLabel>
-                            <Label > Hotel Name</Label>
+                            <Label style={{fontWeight:"300"}} > Hotel Name</Label>
                             <Input
                                 value={this.state.search}
                                 returnKeyType="done"
-                                onChangeText={(text) => this.setState({search: text})}
+                                onChangeText={(text) => this.handleSearch(text)}
                                 autoCapitalize="none"
                                 autoCorrect={false}
                                 />
