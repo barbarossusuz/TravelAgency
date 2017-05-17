@@ -88,6 +88,7 @@ export default class Register extends Component {
             firebaseRef.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((userData) => {
                 {
                     AsyncStorage.setItem('userData', JSON.stringify(userData));
+                    AsyncStorage.setItem('themeValue', JSON.stringify(false));
                     Keyboard.dismiss();
                     Actions.welcomePage();
                     ToastAndroid.showWithGravity("Account succesfuly created", ToastAndroid.SHORT, ToastAndroid.CENTER);

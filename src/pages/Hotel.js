@@ -39,31 +39,32 @@ export default class Hotel extends Menu {
 
     getData() {
         firebaseRef.database().ref("hotel/" + this.props.cityKey).once("value").then((value) => {
+            console.log(value.val());
             this.setState({hotelData: value.val()})
         }).then(() => {
             let arr = [];
             let hotelData = this.state.hotelData;
-            hotelData.map((hotels) => {
+            for(let i=0; i<hotelData.length; i++) {
                 arr.push(
-                    <TouchableOpacity key={hotels.content.key} onPress={() => this.goPage(hotels)}
-                                      style={{marginRight: 5, marginBottom: 5,marginTop: 5}}>
+                    <TouchableOpacity key={hotelData[i].content.key} onPress={() => this.goPage(hotelData[i], i)}
+                                      style={{marginRight: 5, marginBottom: 5, marginTop: 5}}>
                         <Image
                             style={{width: 400, height: 200}}
                             source={{
-                                uri: hotels.content.url
+                                uri: hotelData[i].content.url
                             }}>
-                            <View style={{width: 100,height:20}}>
-                            <StarRating
-                                emptyStar='md-star-outline'
-                                fullStar='md-star'
-                                halfStar='md-star-half'
-                                iconSet='Ionicons'
-                                disabled={true}
-                                maxStars={5}
-                                rating={hotels.content.starRate}
-                                starSize={20}
-                                starColor={'yellow'}
-                            />
+                            <View style={{width: 100, height: 20}}>
+                                <StarRating
+                                    emptyStar='md-star-outline'
+                                    fullStar='md-star'
+                                    halfStar='md-star-half'
+                                    iconSet='Ionicons'
+                                    disabled={true}
+                                    maxStars={5}
+                                    rating={hotelData[i].content.starRate}
+                                    starSize={25}
+                                    starColor={'yellow'}
+                                />
                             </View>
                         </Image>
                         <View>
@@ -71,7 +72,7 @@ export default class Hotel extends Menu {
                                 fontWeight: "300",
                                 color: "black",
                                 fontSize: 15
-                            }}> {(hotels.content.hotelName).toUpperCase()} </Text>
+                            }}> {(hotelData[i].content.hotelName).toUpperCase()} </Text>
                             <Text style={{
                                 fontWeight: "300",
                                 color: "black",
@@ -81,24 +82,28 @@ export default class Hotel extends Menu {
                         </View>
                     </TouchableOpacity>
                 );
-
-            });
+            }
             this.setState({renderArr: arr});
         });
     }
 
 
 
-    goPage(content1) {
+    goPage(hotelContent,objPlace) {
         setTimeout(() => {
             var user = firebaseRef.auth().currentUser;
-            let content = content1;
+            let content = hotelContent;
             let hotelKey = content.content.key;
-            let userRate=0;
+            let userRate;
             firebaseRef.database().ref("hotelStars/" + user.uid + "/" + hotelKey).once("value").then((userStar)=>{
-                userRate= userStar.val().rating;
+                if(userStar.val()===null){
+                    userRate=0;
+                }
+                else{
+                    userRate= userStar.val().rating;
+                }
             }).then(()=>{
-                Actions.hoteldetails({hotelContent: content,userStarRate:userRate});
+                Actions.hoteldetails({hotelContent: content,userStarRate:userRate,objPlace:objPlace});
             });
         }, 300);
     }

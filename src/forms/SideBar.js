@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     Image,
     StyleSheet,
-    Text
+    Text,
+    Switch
 } from 'react-native';
 import {Button, Container} from "native-base";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -26,26 +27,29 @@ export default class SideBar extends Component {
         this.state = {
             name: null,
             email: null,
-            photoUrl: null
+            photoUrl: null,
+            switch: false
         }
 
     }
 
     render() {
         return (
-        <View style={{backgroundColor: "#B2DFDB", width: width / 1.2, height: height, flexDirection: "column"}}>
+            <View style={{backgroundColor: "#B2DFDB", width: width / 1.2, height: height, flexDirection: "column"}}>
 
                 <View style={{flexDirection: "column", padding: 20}}>
 
                     <TouchableOpacity style={{width: 100}} onPress={() => Actions.profile()}>
                         <Image
                             style={{width: 70, height: 70, borderRadius: 35}}
-                            source={this.state.photoUrl === null ? require("../images/profile.png") : {uri:this.state.photoUrl}}/>
+                            source={this.state.photoUrl === null ? require("../images/profile.png") : {uri: this.state.photoUrl}}/>
                     </TouchableOpacity>
 
                     <View style={{marginTop: 10}}>
-                        <Text style={styles.profileText}>{(this.state.name ===null)? null:(this.state.name).toUpperCase()}</Text>
-                        <Text style={styles.profileText}>{(this.state.email ===null)? null:(this.state.email).toUpperCase()}</Text>
+                        <Text
+                            style={styles.profileText}>{(this.state.name === null) ? null : (this.state.name).toUpperCase()}</Text>
+                        <Text
+                            style={styles.profileText}>{(this.state.email === null) ? null : (this.state.email).toUpperCase()}</Text>
                     </View>
                 </View>
 
@@ -65,8 +69,19 @@ export default class SideBar extends Component {
                         <Icon style={{marginRight: 25}} size={25} color="grey" name='md-log-out'/>
                         <Text style={styles.listText}>Log Out</Text>
                     </TouchableOpacity>
+
+                    <View style={{marginTop:5,flexDirection: "row",justifyContent:"space-between",alignItems:"center"}}>
+                    <Text style={styles.listText}>Table Mode: </Text>
+                        <Switch
+                            onValueChange={(value) =>this.changeTheme(value)}
+                            onTintColor="blue"
+                            style={{marginTop: 10}}
+                            thumbTintColor="white"
+                            tintColor="gray"
+                            value={this.state.switch}/>
+                    </View>
                 </View>
-         </View>
+            </View>
         );
     }
 
@@ -85,13 +100,16 @@ export default class SideBar extends Component {
 
     }
 
+    deneme(){
+        Actions.pop();
+    }
     _renderProfile() {
         firebaseRef.auth().onAuthStateChanged((user1) => {
             if (user1) {
                 var user = firebaseRef.auth().currentUser;
                 if (user !== null) {
                     this.setState({
-                        name: user.displayName ,
+                        name: user.displayName,
                         email: user.email,
                         photoUrl: user.photoURL
                     });
@@ -102,10 +120,32 @@ export default class SideBar extends Component {
         });
     };
 
-    componentDidMount(){
-        this._renderProfile();
+
+    changeTheme(themeValue) {
+        this.setState({switch: themeValue});
+        AsyncStorage.setItem('themeValue', JSON.stringify(themeValue));
     }
 
+    // _loadInitialState = async () => {
+    //     try {
+    //         var value = await AsyncStorage.getItem("themeValue");
+    //         if (value !== null){
+    //             this.setState({switch: value});
+    //         } else {
+    //             this._appendMessage('Initialized with no selection on disk.');
+    //         }
+    //     } catch (error) {
+    //         this._appendMessage('AsyncStorage error: ' + error.message);
+    //     }
+    // };
+    componentDidMount() {
+        this._renderProfile();
+        // this._loadInitialState().done();
+        AsyncStorage.getItem("themeValue", (err, value) => {
+            let val = (value === "true");
+            this.setState({switch: val})
+        });
+    }
 }
 
 const styles = StyleSheet.create({

@@ -1,15 +1,21 @@
 import React from 'react';
 import {
-    Text,
+
     View,
+    Text,
     TouchableOpacity,
-    Image
+    Image,
+    AsyncStorage
 } from 'react-native';
 import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
 import {Actions} from "react-native-router-flux";
-import {Container, Content} from 'native-base';
+import {Container, Content, List, ListItem} from 'native-base';
+import Icon from "react-native-vector-icons/Ionicons";
 
+
+var val;
+var val2;
 
 export default class Country extends Menu {
 
@@ -22,12 +28,19 @@ export default class Country extends Menu {
     }
 
     renderContent() {
+        AsyncStorage.getItem("themeValue", (err, value) => {
+
+            val = (value === "true");
+        });
         return (
-            <Container style={{alignItems: "center",backgroundColor: "#fbfaff"}}>
-                <Content>
-                    {this.state.renderArr}
-                </Content>
-            </Container>
+            <Content style={{backgroundColor: "#fbfaff"}}>
+                {val?
+                    <View style={{justifyContent:"center"}}>
+                        { this.state.renderArr}
+                    </View>
+                    :
+                <List>{this.state.renderArr}</List>}
+            </Content>
         )
     }
 
@@ -39,40 +52,54 @@ export default class Country extends Menu {
     }
 
 
-    getData(){
-        firebaseRef.database().ref("country").once("value").then( (value)=> {
-          this.setState({countryData: value.val()})
-        }).then(()=>{
-            let arr =[];
-            let countryData = this.state.countryData;
-            countryData.map((countries) => {
-                arr.push
-                (
-                    <TouchableOpacity key={countries.key} onPress={() => this.goPage(countries.key)}>
-                        <Image
-                            style={{width: 400, height: 180, marginBottom: 3, marginTop: 3, borderRadius: 15}}
-                            source={{
-                                uri: countries.url
-                            }}>
-                            <View>
-                                <Text style={{
-                                    fontWeight: "300",
-                                    color: "white",
-                                    fontSize: 18
-                                }}> {(countries.key).toUpperCase()} </Text>
-                            </View>
-                        </Image>
-                    </TouchableOpacity>
-                );
+    getData() {
+
+            firebaseRef.database().ref("country").once("value").then((value) => {
+                this.setState({countryData: value.val()})
+            }).then(() => {
+                let arr = [];
+                let countryData = this.state.countryData;
+                countryData.map((countries) => {
+                    if (val === true) {
+                        arr.push
+                        (
+                            <TouchableOpacity key={countries.key} onPress={() => this.goPage(countries.key)}>
+                                <Image
+                                    style={{width: 400, height: 180, marginBottom: 3, marginTop: 3, borderRadius: 15}}
+                                    source={{
+                                        uri: countries.url
+                                    }}>
+                                    <View>
+                                        <Text style={{
+                                            fontWeight: "300",
+                                            color: "white",
+                                            fontSize: 18
+                                        }}> {(countries.key).toUpperCase()} </Text>
+                                    </View>
+                                </Image>
+                            </TouchableOpacity>
+                        );
+                    }
+                    else {
+                        arr.push
+                        (
+                                <ListItem  key={countries.key} >
+                                    <TouchableOpacity style={{flex:1}} onPress={() => this.goPage(countries.key)}>
+                                        <View style={{justifyContent:"space-between",flexDirection: "row"}}>
+                                        <Text style={{ fontWeight: "200",fontSize: 17}}> {(countries.key).toUpperCase()} </Text>
+                                        <Icon name="md-play" color="black"> </Icon>
+                                        </View>
+                                    </TouchableOpacity>
+                                </ListItem>
+                        );
+                    }
+
+                });
+                this.setState({renderArr: arr});
             });
-            this.setState({renderArr: arr});
-        });
     }
+
     componentDidMount() {
         this.getData();
-    }
-
-    componentWillMount() {
-
     }
 }

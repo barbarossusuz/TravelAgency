@@ -75,6 +75,7 @@ export default class Login extends Component {
             firebaseRef.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((userData) => {
                 {
                     AsyncStorage.setItem('userData', JSON.stringify(userData));
+                    AsyncStorage.setItem('themeValue', JSON.stringify(false));
                     Keyboard.dismiss();
                     Actions.welcomePage();
                 }

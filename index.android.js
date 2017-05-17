@@ -29,16 +29,16 @@ export default class TravelAgency extends Component {
     render() {
         return (
             <Router >
-              <Scene key="root">
-                <Scene key="initialPage" component={InitialPage} hideNavBar={true} initial={true}/>
-                <Scene key="login" component={Login} hideNavBar={true} type={ActionConst.RESET} />
-                <Scene key="register" component={Register} hideNavBar={true} type={ActionConst.RESET} />
-                <Scene key="welcomePage" component={Country} hideNavBar={true} type={ActionConst.RESET} />
-                <Scene key="profile" component={Profile} hideNavBar={true}/>
-                <Scene key="city" component={City} hideNavBar={true}/>
-                <Scene key="hotel" component={Hotel} hideNavBar={true}/>
-                <Scene key="hoteldetails" component={HotelDetails} hideNavBar={true}/>
-                <Scene key="hotelsearch" component={HotelSearch} hideNavBar={true}/>
+              <Scene key="root"  hideNavBar={true}>
+                <Scene key="initialPage" component={InitialPage} initial={true}/>
+                <Scene key="login" component={Login} type={ActionConst.RESET} />
+                <Scene key="register" component={Register}  type={ActionConst.RESET} />
+                <Scene key="welcomePage" component={Country} type={ActionConst.RESET} />
+                <Scene key="profile" component={Profile} />
+                <Scene key="city" component={City}/>
+                <Scene key="hotel" component={Hotel} />
+                <Scene key="hoteldetails" component={HotelDetails} />
+                <Scene key="hotelsearch" component={HotelSearch} />
               </Scene>
             </Router>
         )
