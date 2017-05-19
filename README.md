@@ -29,7 +29,7 @@ You can start by cloning the latest version.
 This will install both run-time project dependencies and developer tools listed
 in [package.json](./package.json) file.
 
-#### 3. To Install Peer Dependencies
+#### 3. To Install Peer Dependencies If You Needed (Already linked in cloning version) 
 
 ```shell
 $ react-native link
