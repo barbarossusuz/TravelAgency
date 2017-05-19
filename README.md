@@ -10,7 +10,6 @@
 * [react native drawer](https://github.com/root-two/react-native-drawer) for Drawer (Sidebar) .
 * [Firebase](https://github.com/firebase/) for Cloud Database .
 * [react-native-fetch-blob](https://github.com/wkh237/react-native-fetch-blob) for Access File System .
-* [react-native-fs](https://github.com/itinance/react-native-fs) for Access File System .
 
 #####  Requirements
 
