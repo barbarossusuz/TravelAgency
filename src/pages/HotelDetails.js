@@ -6,7 +6,8 @@ import {
     Image,
     DatePickerAndroid,
     TouchableWithoutFeedback,
-    StyleSheet
+    StyleSheet,
+    ToastAndroid
 } from 'react-native';
 import {firebaseRef} from "../Firebase";
 import Menu from "../main/Menu";
@@ -29,13 +30,28 @@ export default class HotelDetails extends Menu {
             startingDate: new Date(),
             endingDate: new Date(),
             startingText:"Pick Start Date",
-            endingText:"Pick End Date"
+            endingText:"Pick End Date",
+            total: 0,
+            madeChoice: true
         };
     }
 
     renderContent() {
-        return (
+        var timeDiff = Math.abs(this.state.endingDate.getTime() - this.state.startingDate.getTime());
+        if(this.state.startingDate >= this.state.endingDate){
+            var diffDays = "Start Date cannot be equal or higher than End Date ";
+        }
+        else if(this.state.startingDate < new Date()){
+            var diffDays ="Start Date cannot be lower than Todays Date";
+        }
+        else if(this.state.endingDate <= new Date()){
+            var diffDays ="End Date cannot be lower than Todays Date";
+        }
+        else {
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        }
 
+        return (
             <Content style={{backgroundColor: "#fbfaff",padding:5}}>
                 <View style={{width: 100, height: 20}}>
                 <StarRating
@@ -52,28 +68,44 @@ export default class HotelDetails extends Menu {
                 />
                 </View>
                 {this.getData()}
-                <View style={{justifyContent: "center",flexDirection:"row"}}>
+                <View style={{justifyContent: "flex-start",flexDirection:"row",marginBottom: 10}}>
                 <TouchableWithoutFeedback
                     onPress={this.showPicker.bind(this, 'starting', {date: this.state.startingDate})}>
                     <View style={styles.dateContainer}>
-                            <Icon size={20} name="md-time" style={{color: 'white', marginRight: 5}}/>
+                            <Icon size={20} name="md-time" style={{color: 'white', marginRight: 5,marginLeft:2}}/>
                             <Text style={styles.dateText}>{this.state.startingText}</Text>
                     </View>
                 </TouchableWithoutFeedback>
                 </View>
 
-                <View style={{justifyContent: "center",flexDirection:"row"}}>
+
+
+                <View style={{justifyContent: "flex-start",flexDirection:"row"}}>
                     <TouchableWithoutFeedback
                         onPress={this.showPicker.bind(this, 'ending', {date: this.state.endingDate})}>
                         <View style={styles.dateContainer}>
-                            <Icon size={20} name="md-time" style={{color: 'white', marginRight: 5}}/>
+                            <Icon size={20} name="md-time" style={{color: 'white', marginRight: 5,marginLeft: 2}}/>
                             <Text style={styles.dateText}>{this.state.endingText}</Text>
                         </View>
                     </TouchableWithoutFeedback>
                 </View>
+                <View style={{justifyContent: "flex-start",flexDirection:"row",marginBottom: 10}}>
+                {typeof diffDays !== "string"?
 
-                <Button transparent onPress={()=>this.deneme(hotelContent)}><Text>Booking</Text></Button>
 
+                        <Text>Total Price for {diffDays} {diffDays>1?"Days" : "Day"} is: {diffDays*this.state.hotelContent.content.price}</Text>
+                    :<Text style={{color:"red"}}>{diffDays}</Text>}</View>
+                <View style={{  backgroundColor: "#fbfaff",
+                    paddingVertical: 15,
+                    borderWidth: 0.8,
+                    borderRadius: 30,marginTop:10}}>
+                    <TouchableOpacity onPress={()=>this.deneme()}>
+                        <Text style={{
+                            textAlign: "center",
+                            color: "#000000",
+                            fontWeight: "700"}}>Send Booking Request</Text>
+                    </TouchableOpacity>
+                </View>
             </Content>
         )
     }
@@ -105,7 +137,7 @@ export default class HotelDetails extends Menu {
                             }}/>
                     </View>
                 </TouchableOpacity>
-                <Text>Price: ${hotelContent.content.price}</Text>
+                <Text>${hotelContent.content.price} For A Day</Text>
                 <View style={{width: 100, height: 20}}>
                 </View>
             </View>
@@ -149,8 +181,25 @@ export default class HotelDetails extends Menu {
         });
     }
 
-    deneme(content) {
+    deneme() {
+        if(this.state.endingDate && this.state.startingDate){
+        if(this.state.startingDate >= this.state.endingDate){
+            ToastAndroid.showWithGravity("Start Date cannot be equal or higher than End Date ", ToastAndroid.SHORT, ToastAndroid.CENTER);
+        }
+        else if(this.state.startingDate < new Date()){
+            ToastAndroid.showWithGravity("Start Date cannot be lower than Todays Date", ToastAndroid.SHORT, ToastAndroid.CENTER);
+        }
+        else if(this.state.endingDate <= new Date()){
+            ToastAndroid.showWithGravity("End Date cannot be lower than Todays Date", ToastAndroid.SHORT, ToastAndroid.CENTER);
+        }
+        else {
+            ToastAndroid.showWithGravity("Reservation successfully saved", ToastAndroid.SHORT, ToastAndroid.CENTER);
+        }
+        }
+        else{
+            ToastAndroid.showWithGravity("Please Select Dates", ToastAndroid.SHORT, ToastAndroid.CENTER);
 
+        }
     }
 
     setHotelStar() {
@@ -200,7 +249,7 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderRadius: 1,
         flexDirection:"row",
-        justifyContent: "center"
+        justifyContent: "flex-start"
     },
     dateText: {
         textAlign: "center",
