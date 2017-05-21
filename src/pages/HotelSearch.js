@@ -50,19 +50,20 @@ export default class HotelSearch extends Menu {
 
     renderAllHotels(data) {
         let searchData = data;
+        console.log("data",data);
         let arr=[];
-            (searchData).map((insideObj) => {
+            for(let i=0; i<searchData.length; i++) {
                 arr.push(
-                        <View  key={insideObj.content.key}>
+                        <View  key={searchData[i].content.key}>
                         <List>
                             <ListItem>
-                                <Thumbnail square size={80} source={{uri: insideObj.content.url}}/>
+                                <Thumbnail square size={80} source={{uri: searchData[i].content.url}}/>
                                 <Body>
-                                <Text>{(insideObj.cityName).toUpperCase()}</Text>
-                                <Text note> {insideObj.content.hotelName}</Text>
+                                <Text>{(searchData[i].cityName).toUpperCase()}</Text>
+                                <Text note> {searchData[i].content.hotelName}</Text>
                                 </Body>
                                 <Right>
-                                    <TouchableOpacity  onPress={() => this.goPage(insideObj)}>
+                                    <TouchableOpacity  onPress={() => this.goPage(searchData[i],i)}>
                                         <Text style={{color: "blue",fontWeight:"400"}}>Go Page</Text>
                                     </TouchableOpacity>
                                 </Right>
@@ -71,21 +72,25 @@ export default class HotelSearch extends Menu {
 
                         </View>
                 )
-            });
+            }
         this.setState({renderArr:arr});
     }
 
-    goPage(content1){
-        console.log("content1", content1)
+    goPage(content1,objPlace){
         setTimeout(() => {
             var user = firebaseRef.auth().currentUser;
             let content = content1;
             let hotelKey = content.content.key;
             let userRate=0;
             firebaseRef.database().ref("hotelStars/" + user.uid + "/" + hotelKey).once("value").then((userStar)=>{
-                userRate= userStar.val().rating;
+                if(userStar.val()===null){
+                    userRate=0;
+                }
+                else{
+                    userRate= userStar.val().rating;
+                }
             }).then(()=>{
-                Actions.hoteldetails({hotelContent: content,userStarRate:userRate});
+                Actions.hoteldetails({hotelContent: content,userStarRate:userRate,objPlace:objPlace});
             });
         }, 300);
     }

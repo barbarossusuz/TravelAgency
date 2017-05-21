@@ -20,11 +20,13 @@ export default class InitialPage extends Component {
     render() {
         return (
             <View style={{flex: 1,justifyContent: "center",alignItems: "center"}}>
-                <Image source={require("./../images/travel.png")}/>
+                <Image source={require("./../images/travelTrust.jpg")}/>
+                <View style={{marginTop:10}}>
                 <ActivityIndicator
                     size="large"
                     color="#aa3300"
                 />
+                </View>
             </View>
         );
     }

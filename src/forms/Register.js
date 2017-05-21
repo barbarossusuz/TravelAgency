@@ -29,8 +29,8 @@ export default class Register extends Component {
                 <View style={styles.logoContainer}>
                     <Image
                         style={styles.logo}
-                        source={require("./../images/travel.png")}/>
-                    <Text style={styles.title}>REgister </Text>
+                        source={require("./../images/travelTrust.jpg")}/>
+                    <Text style={styles.title}>REGISTER </Text>
                 </View>
                 <View>
                     <View style={styles.loginContainer}>

@@ -28,8 +28,8 @@ export default class Login extends Component {
             <View style={styles.logoContainer}>
                 <Image
                     style={styles.logo}
-                    source={require("./../images/travel.png")}/>
-                <Text style={styles.title}>LOgin </Text>
+                    source={require("./../images/travelTrust.jpg")}/>
+                <Text style={styles.title}>LOGIN </Text>
             </View>
             <View>
                 <View style={styles.loginContainer}>

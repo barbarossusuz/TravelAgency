@@ -117,13 +117,12 @@ export default class HotelDetails extends Menu {
             var newState = {};
             const {action, year, month, day} = await DatePickerAndroid.open(options);
             if (action === DatePickerAndroid.dismissedAction) {
-                newState[stateKey + 'Text'] = 'dismissed';
+                newState[stateKey + 'Text'] = 'Invalid Date';
             } else {
                 var date = new Date(year, month, day);
                 newState[stateKey + 'Text'] = date.toLocaleDateString();
                 newState[stateKey + 'Date'] = date;
             }
-            console.log("newstate",newState)
             this.setState(newState);
             this.forceUpdate();
         } catch ({code, message}) {

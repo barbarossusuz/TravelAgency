@@ -124,6 +124,7 @@ export default class SideBar extends Component {
     changeTheme(themeValue) {
         this.setState({switch: themeValue});
         AsyncStorage.setItem('themeValue', JSON.stringify(themeValue));
+        Actions.initialPage();
     }
 
     // _loadInitialState = async () => {
