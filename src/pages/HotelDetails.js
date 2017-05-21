@@ -182,6 +182,13 @@ export default class HotelDetails extends Menu {
     }
 
     deneme() {
+        var user = firebaseRef.auth().currentUser;
+        let content = this.props.hotelContent;
+        let hotelKey = content.content.key;
+        let hotelName = content.content.hotelName;
+        var timeDiff = Math.abs(this.state.endingDate.getTime() - this.state.startingDate.getTime());
+        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
         if(this.state.endingDate && this.state.startingDate){
         if(this.state.startingDate >= this.state.endingDate){
             ToastAndroid.showWithGravity("Start Date cannot be equal or higher than End Date ", ToastAndroid.SHORT, ToastAndroid.CENTER);
@@ -193,7 +200,15 @@ export default class HotelDetails extends Menu {
             ToastAndroid.showWithGravity("End Date cannot be lower than Todays Date", ToastAndroid.SHORT, ToastAndroid.CENTER);
         }
         else {
-            ToastAndroid.showWithGravity("Reservation successfully saved", ToastAndroid.SHORT, ToastAndroid.CENTER);
+            firebaseRef.database().ref("resarvation/" + user.uid + "/" + hotelKey).set({
+                startDate: this.state.startingDate,
+                endDate: this.state.endingDate,
+                hotelName: hotelName,
+                hotelKey: hotelKey,
+                price: diffDays*content.content.price
+            }).then(() => {
+                ToastAndroid.showWithGravity("Reservation successfully saved", ToastAndroid.SHORT, ToastAndroid.CENTER);
+            });
         }
         }
         else{
